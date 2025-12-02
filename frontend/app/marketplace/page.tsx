@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Spellbook } from '@/components/Spellbook';
 import { Search, Filter, MessageCircle } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { clsx } from 'clsx';
+import { getMarketplaceListings } from '@/app/actions';
 
 export default function MarketplacePage() {
     const [listings, setListings] = useState<any[]>([]);
@@ -15,27 +14,14 @@ export default function MarketplacePage() {
     useEffect(() => {
         async function fetchListings() {
             try {
-                let q = query(
-                    collection(db, "marketplace_listings"),
-                    orderBy("listedAt", "desc"),
-                    limit(50)
-                );
-
-                if (schoolFilter !== 'All') {
-                    q = query(
-                        collection(db, "marketplace_listings"),
-                        where("petSchool", "==", schoolFilter),
-                        orderBy("listedAt", "desc"),
-                        limit(50)
-                    );
+                const result = await getMarketplaceListings();
+                if (result.success && result.listings) {
+                    let filtered = result.listings;
+                    if (schoolFilter !== 'All') {
+                        filtered = filtered.filter((l: any) => l.petSchool === schoolFilter);
+                    }
+                    setListings(filtered);
                 }
-
-                const querySnapshot = await getDocs(q);
-                const fetchedListings = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                setListings(fetchedListings);
             } catch (error) {
                 console.error("Error fetching marketplace listings:", error);
             } finally {

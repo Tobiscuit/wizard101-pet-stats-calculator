@@ -103,3 +103,22 @@ export async function listPetInMarketplace(petId: string, listingData: any) {
         return { success: false, error: error.message };
     }
 }
+
+export async function getMarketplaceListings() {
+    try {
+        const db = getAdminFirestore();
+        const listingsRef = db.collection("marketplace_listings");
+        const snapshot = await listingsRef.orderBy("listedAt", "desc").limit(50).get();
+
+        const listings = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            listedAt: doc.data().listedAt?.toDate?.()?.toISOString() || new Date().toISOString()
+        }));
+
+        return { success: true, listings };
+    } catch (error: any) {
+        console.error("Server Action getMarketplaceListings Error:", error);
+        return { success: false, error: error.message };
+    }
+}
