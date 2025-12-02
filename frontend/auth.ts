@@ -1,32 +1,14 @@
 import NextAuth from "next-auth";
-import Discord from "next-auth/providers/discord";
-import Google from "next-auth/providers/google";
 import { FirestoreAdapter } from "@auth/firebase-adapter";
 import { getAdminFirestore } from "@/lib/firebase-admin";
+import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    providers: [
-        Discord({
-            clientId: process.env.DISCORD_CLIENT_ID,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        }),
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        }),
-    ],
+    ...authConfig,
     adapter: FirestoreAdapter(getAdminFirestore()),
-    callbacks: {
-        async session({ session, user }) {
-            if (session.user) {
-                // Add user ID to session
-                session.user.id = user.id;
-
-                // Add Discord ID if available (from account linking)
-                // Note: This requires looking up the Account in Firestore, which the adapter handles.
-                // We might need to extend the session type to include this.
-            }
-            return session;
-        },
-    },
+    session: { strategy: "jwt" }, // Force JWT for Edge compatibility if needed, but Adapter usually implies database. 
+    // Wait, if we use Adapter, we can't run fully on Edge for session strategy 'database'.
+    // But middleware only needs to verify the session token (JWT).
+    // If we use database sessions, middleware can't verify them without database access.
+    // Let's stick to the default strategy but ensure middleware uses authConfig which DOESN'T have the adapter.
 });

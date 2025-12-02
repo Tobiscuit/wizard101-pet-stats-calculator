@@ -1,11 +1,9 @@
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
-export const proxy = auth((req) => {
-    if (!req.auth && req.nextUrl.pathname.startsWith("/my-pets")) {
-        const newUrl = new URL("/api/auth/signin", req.nextUrl.origin);
-        return Response.redirect(newUrl);
-    }
-});
+const { auth } = NextAuth(authConfig);
+
+export const proxy = auth;
 
 export const config = {
     matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
