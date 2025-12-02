@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { Shield, Sword } from 'lucide-react';
+import { Shield, Sword, Sparkles } from 'lucide-react';
 
 // Types
 type Stats = {
@@ -34,6 +34,7 @@ export function Calculator() {
     const [currentStats, setCurrentStats] = useState<Stats>({ ...BASE_CAPS });
     const [maxStats, setMaxStats] = useState<Stats>({ ...BASE_CAPS });
     const [talents, setTalents] = useState<string[]>([]);
+    const [advice, setAdvice] = useState<string>("");
     const [petInfo, setPetInfo] = useState<{ name?: string; type?: string; school?: string; age?: string }>({});
     const [confidence, setConfidence] = useState<number>(100);
 
@@ -46,6 +47,7 @@ export function Calculator() {
                 if (data.currentStats) setCurrentStats(data.currentStats);
                 if (data.maxPossibleStats) setMaxStats(data.maxPossibleStats);
                 if (data.talents) setTalents(data.talents);
+                if (data.advice) setAdvice(data.advice);
                 if (data.petInfo) setPetInfo(data.petInfo);
                 // Optional: Clear draft after loading? 
                 // Better to keep it until successfully saved to DB to prevent loss.
@@ -61,15 +63,17 @@ export function Calculator() {
             currentStats,
             maxPossibleStats: maxStats,
             talents,
+            advice,
             petInfo
         };
         localStorage.setItem('pet_draft', JSON.stringify(draft));
-    }, [currentStats, maxStats, talents, petInfo]);
+    }, [currentStats, maxStats, talents, advice, petInfo]);
 
     const handleScanComplete = (data: any) => {
         if (data.currentStats) setCurrentStats(data.currentStats);
         if (data.maxPossibleStats) setMaxStats(data.maxPossibleStats);
         if (data.talents) setTalents(data.talents);
+        if (data.advice) setAdvice(data.advice);
         if (data.confidence) setConfidence(data.confidence);
 
         setPetInfo({

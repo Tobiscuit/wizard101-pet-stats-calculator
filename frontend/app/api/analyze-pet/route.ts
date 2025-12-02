@@ -44,6 +44,7 @@ const schema: Schema = {
             type: SchemaType.ARRAY,
             items: { type: SchemaType.STRING }
         },
+        advice: { type: SchemaType.STRING, nullable: true },
         confidence: { type: SchemaType.NUMBER }
     },
     required: ["petType", "petSchool", "petAge", "currentStats", "maxPossibleStats", "confidence"]
@@ -87,7 +88,14 @@ export async function POST(req: Request) {
    - "MAX (320)" → current=320, max=320
    - "150/250" → current=150, max=250
 
-6. Talents: All visible talent names in the list
+6. Talents: LIST ALL TALENTS visible on the LEFT side under the "TALENTS" header.
+   - Examples: "Pain-Giver", "Spell-Proof", "Mighty", "Storm-Dealer".
+   - Ignore the "Derby" column.
+
+7. Advice: Provide a brief, fun, strategic analysis (2-3 sentences).
+   - Is this pet "Meta"? (e.g., Triple/Double, Quint Damage, Ward Pet).
+   - Best for Questing, PvP, or Deckathalon?
+   - Comment on the stats (e.g., "Great strength for damage!").
 
 Return JSON matching schema. Confidence 0-100 based on clarity.`;
 
