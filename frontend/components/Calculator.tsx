@@ -140,8 +140,6 @@ export function Calculator() {
                 petAge: petInfo.age,
                 currentStats,
                 maxPossibleStats: maxStats,
-                currentStats,
-                maxPossibleStats: maxStats,
                 talents,
                 advice
             });
