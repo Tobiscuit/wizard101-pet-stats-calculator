@@ -8,11 +8,15 @@ import Link from 'next/link';
 import { getPets, listPetInMarketplace, unlistPetFromMarketplace } from '@/app/actions';
 import { PetDetailsModal } from '@/components/PetDetailsModal';
 
+import { DiscordUsernameModal } from '@/components/DiscordUsernameModal';
+
 export default function MyPetsPage() {
     const { data: session, status } = useSession();
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedPet, setSelectedPet] = useState<any>(null);
+    const [showDiscordPrompt, setShowDiscordPrompt] = useState(false);
+    const [pendingPet, setPendingPet] = useState<any>(null);
 
     useEffect(() => {
         async function fetchPets() {
@@ -35,7 +39,7 @@ export default function MyPetsPage() {
         fetchPets();
     }, [session, status]);
 
-    const handleListPet = async (pet: any) => {
+    const handleListPet = async (pet: any, discordUsername?: string) => {
         try {
             const result = await listPetInMarketplace(pet.id, {
                 petType: pet.petType,
@@ -46,7 +50,7 @@ export default function MyPetsPage() {
                 talents: pet.talents,
                 calculatedDamage: "TBD",
                 calculatedResist: "TBD"
-            });
+            }, discordUsername);
 
             if (result.success) {
                 setPets(prev => prev.map(p => p.id === pet.id ? { ...p, listedInMarketplace: true } : p));
@@ -54,12 +58,25 @@ export default function MyPetsPage() {
                 if (selectedPet?.id === pet.id) {
                     setSelectedPet((prev: any) => ({ ...prev, listedInMarketplace: true }));
                 }
+                setShowDiscordPrompt(false);
+                setPendingPet(null);
             } else {
-                throw new Error(result.error);
+                if (result.error?.includes("Discord Username is required")) {
+                    setPendingPet(pet);
+                    setShowDiscordPrompt(true);
+                } else {
+                    throw new Error(result.error);
+                }
             }
         } catch (error) {
             console.error("Error listing pet:", error);
             alert("Failed to list pet.");
+        }
+    };
+
+    const handleDiscordSubmit = (username: string) => {
+        if (pendingPet) {
+            handleListPet(pendingPet, username);
         }
     };
 
@@ -164,6 +181,16 @@ export default function MyPetsPage() {
                     onUnlistFromMarketplace={handleUnlistPet}
                 />
             )}
+
+            {/* Discord Username Prompt */}
+            <DiscordUsernameModal
+                isOpen={showDiscordPrompt}
+                onClose={() => {
+                    setShowDiscordPrompt(false);
+                    setPendingPet(null);
+                }}
+                onSubmit={handleDiscordSubmit}
+            />
         </main>
     );
 }

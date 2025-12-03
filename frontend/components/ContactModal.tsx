@@ -19,13 +19,13 @@ export function ContactModal({ isOpen, onClose, listing, currentUserId }: Contac
 
     const isOwnPet = currentUserId === listing.userId;
     const contact = listing.ownerContact || {};
-    // Check if the "discord" field looks like an email (legacy/fallback behavior)
-    const isEmail = contact.discord && contact.discord.includes('@');
     const discordId = contact.discordUserId;
-    const contactValue = contact.discord || contact.email;
+    // Strictly use the 'discord' field, which now ONLY contains a username if set manually, or ID if oauth
+    // But wait, listPetInMarketplace sets 'discord' to the username.
+    const discordUsername = contact.discord;
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(contactValue);
+        navigator.clipboard.writeText(discordUsername);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -87,11 +87,11 @@ export function ContactModal({ isOpen, onClose, listing, currentUserId }: Contac
                                     <MessageCircle className="w-5 h-5" />
                                     Open Discord DM
                                 </button>
-                            ) : (
+                            ) : discordUsername ? (
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2 text-sm text-white/80 bg-black/20 p-3 rounded border border-white/5 break-all">
-                                        {isEmail ? <Mail className="w-4 h-4 shrink-0" /> : <MessageCircle className="w-4 h-4 shrink-0" />}
-                                        <span>{contactValue}</span>
+                                        <MessageCircle className="w-4 h-4 shrink-0 text-[#5865F2]" />
+                                        <span>{discordUsername}</span>
                                     </div>
                                     <button
                                         onClick={handleCopy}
@@ -103,13 +103,15 @@ export function ContactModal({ isOpen, onClose, listing, currentUserId }: Contac
                                         )}
                                     >
                                         {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                        {copied ? "Copied!" : "Copy Contact Info"}
+                                        {copied ? "Copied!" : "Copy Username"}
                                     </button>
-                                    {isEmail && (
-                                        <p className="text-xs text-center text-white/40 mt-2">
-                                            This wizard is using email login.
-                                        </p>
-                                    )}
+                                    <p className="text-xs text-center text-white/40 mt-2">
+                                        Add this wizard on Discord to hatch!
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="text-center text-white/40 italic py-2">
+                                    No contact info available.
                                 </div>
                             )}
                         </div>
