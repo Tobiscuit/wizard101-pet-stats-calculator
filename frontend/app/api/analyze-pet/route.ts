@@ -90,6 +90,9 @@ export async function POST(req: Request) {
 
 6. Talents: LIST ALL TALENTS visible on the LEFT side under the "TALENTS" header.
    - Examples: "Pain-Giver", "Spell-Proof", "Mighty", "Storm-Dealer".
+   - Common Selfish Talents (Recognize these):
+     - Mighty (STR+65), Thinking Cap (WILL+65), Relentless (AGI+65), Brilliant (INT+65), Powerful (POW+65)
+     - Best of Show, Cautious, Unshakable, Vigorous, Early Bird, Resourceful
    - Ignore the "Derby" column.
 
 7. Advice: Provide a brief, fun, strategic analysis (2-3 sentences).

@@ -46,11 +46,21 @@ export function calculateTalentValue(talentName: string, stats: Stats): string |
     }
 
     // Selfish Talents (Stat Boosts)
+    // Tier 1 (+65)
     else if (name === 'mighty') return 'STR+65';
     else if (name === 'thinking cap') return 'WILL+65';
     else if (name === 'relentless') return 'AGI+65';
     else if (name === 'brilliant') return 'INT+65';
     else if (name === 'powerful') return 'POW+65';
+
+    // Tier 2 (+40/+25)
+    else if (name === 'best of show') return 'STR+40, INT+25';
+    else if (name === 'cautious') return 'STR+25, WILL+40';
+    else if (name === 'unshakable') return 'STR+40, AGI+25';
+    else if (name === 'vigorous') return 'STR+25, POW+40';
+    else if (name === 'early bird') return 'AGI+40, WILL+25';
+    else if (name === 'resourceful') return 'INT+40, POW+25';
+    else if (name === 'perceptive') return 'INT+40, WILL+25'; // Assuming standard 40/25 split
 
     if (value > 0) {
         return `${Math.round(value)}%`;
