@@ -188,6 +188,41 @@ export async function getMarketplaceListings() {
     }
 }
 
+export async function getListing(listingId: string) {
+    try {
+        const db = getAdminFirestore();
+        const doc = await db.collection("marketplace_listings").doc(listingId).get();
+
+        if (!doc.exists) {
+            return { success: false, error: "Listing not found" };
+        }
+
+        const data = doc.data();
+
+        // Fetch owner presence
+        let ownerLastSeen = null;
+        if (data?.userId) {
+            const userDoc = await db.collection("users").doc(data.userId).get();
+            if (userDoc.exists) {
+                ownerLastSeen = userDoc.data()?.lastSeen?.toDate() || null;
+            }
+        }
+
+        return {
+            success: true,
+            listing: {
+                id: doc.id,
+                ...data,
+                listedAt: data?.listedAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+                ownerLastSeen: ownerLastSeen ? ownerLastSeen.toISOString() : null
+            }
+        };
+    } catch (error: any) {
+        console.error("Server Action getListing Error:", error);
+        return { success: false, error: error.message };
+    }
+}
+
 export async function unlistPetFromMarketplace(petId: string) {
     const session = await auth();
 

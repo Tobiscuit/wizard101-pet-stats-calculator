@@ -153,6 +153,21 @@ export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFro
                         )}
 
                         <div className="flex gap-4">
+                            {pet.listedInMarketplace && (
+                                <button
+                                    onClick={() => {
+                                        const url = `${window.location.origin}/marketplace/${pet.id}`;
+                                        navigator.clipboard.writeText(url);
+                                        // Assuming we have a toast or alert
+                                        alert("Link copied to clipboard!");
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors border border-white/10"
+                                >
+                                    <Share2 className="w-4 h-4" />
+                                    Share
+                                </button>
+                            )}
+
                             {!pet.listedInMarketplace && onListInMarketplace && (
                                 <button
                                     onClick={() => onListInMarketplace(pet)}
