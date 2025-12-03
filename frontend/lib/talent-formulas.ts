@@ -45,6 +45,13 @@ export function calculateTalentValue(talentName: string, stats: Stats): string |
         value = resistBase / 400;
     }
 
+    // Selfish Talents (Stat Boosts)
+    else if (name === 'mighty') return 'STR+65';
+    else if (name === 'thinking cap') return 'WILL+65';
+    else if (name === 'relentless') return 'AGI+65';
+    else if (name === 'brilliant') return 'INT+65';
+    else if (name === 'powerful') return 'POW+65';
+
     if (value > 0) {
         return `${Math.round(value)}%`;
     }
