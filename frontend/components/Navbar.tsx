@@ -75,12 +75,12 @@ export function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => signIn()}
+                            <Link
+                                href="/login"
                                 className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                             >
                                 Sign In
-                            </button>
+                            </Link>
                         )}
                     </div>
 
@@ -136,12 +136,13 @@ export function Navbar() {
                                     </button>
                                 </>
                             ) : (
-                                <button
-                                    onClick={() => signIn()}
-                                    className="w-full text-left px-3 py-2 text-accent-gold hover:bg-white/5 rounded-md"
+                                <Link
+                                    href="/login"
+                                    className="block w-full text-left px-3 py-2 text-accent-gold hover:bg-white/5 rounded-md"
+                                    onClick={() => setIsMenuOpen(false)}
                                 >
                                     Sign In
-                                </button>
+                                </Link>
                             )}
                         </div>
                     </div>

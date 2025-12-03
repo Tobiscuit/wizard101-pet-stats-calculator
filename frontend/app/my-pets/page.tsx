@@ -97,7 +97,7 @@ export default function MyPetsPage() {
             <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
                 <h1 className="text-2xl font-serif text-accent-gold mb-4">My Pet Tome</h1>
                 <p className="text-foreground/80 mb-6">Please login to view your saved pets.</p>
-                <Link href="/api/auth/signin" className="px-6 py-2 bg-accent-blue text-white rounded hover:bg-accent-blue/90">
+                <Link href="/login" className="px-6 py-2 bg-accent-blue text-white rounded hover:bg-accent-blue/90">
                     Login
                 </Link>
             </div>

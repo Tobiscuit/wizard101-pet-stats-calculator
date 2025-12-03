@@ -11,4 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // But middleware only needs to verify the session token (JWT).
     // If we use database sessions, middleware can't verify them without database access.
     // Let's stick to the default strategy but ensure middleware uses authConfig which DOESN'T have the adapter.
+    pages: {
+        signIn: '/login',
+    },
 });
