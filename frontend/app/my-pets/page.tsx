@@ -121,30 +121,30 @@ export default function MyPetsPage() {
                             <div
                                 key={pet.id}
                                 onClick={() => setSelectedPet(pet)}
-                                className="bg-white/60 p-4 rounded-lg border border-accent-gold/30 hover:shadow-lg transition-all cursor-pointer group relative"
+                                className="bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-accent-gold/30 hover:border-accent-gold hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] transition-all cursor-pointer group relative"
                             >
                                 {pet.listedInMarketplace && (
-                                    <div className="absolute top-2 right-2 px-2 py-1 bg-accent-gold text-white text-xs rounded font-bold shadow-sm z-10">
+                                    <div className="absolute top-2 right-2 px-2 py-1 bg-accent-gold text-black text-xs font-bold rounded shadow-sm z-10">
                                         Listed
                                     </div>
                                 )}
 
-                                <h3 className="font-bold text-lg text-accent-gold mb-1 group-hover:text-accent-blue transition-colors">
+                                <h3 className="font-serif font-bold text-xl text-accent-gold mb-1 group-hover:text-white transition-colors tracking-wide">
                                     {pet.petNickname || pet.petType}
                                 </h3>
-                                <div className="flex gap-2 text-sm text-foreground/70 mb-3">
-                                    <span className="px-2 py-0.5 bg-white/50 rounded border border-black/5">{pet.petSchool}</span>
-                                    <span className="px-2 py-0.5 bg-white/50 rounded border border-black/5">{pet.petAge}</span>
+                                <div className="flex gap-2 text-sm text-white/70 mb-4">
+                                    <span className="px-2 py-0.5 bg-white/10 rounded border border-white/10">{pet.petSchool}</span>
+                                    <span className="px-2 py-0.5 bg-white/10 rounded border border-white/10">{pet.petAge}</span>
                                 </div>
 
-                                <div className="flex flex-wrap gap-1">
+                                <div className="flex flex-wrap gap-1.5">
                                     {pet.talents?.slice(0, 3).map((talent: string, i: number) => (
-                                        <span key={i} className="text-xs px-1.5 py-0.5 bg-accent-blue/10 text-accent-blue rounded">
+                                        <span key={i} className="text-xs px-2 py-1 bg-blue-500/20 text-blue-200 border border-blue-500/30 rounded">
                                             {talent}
                                         </span>
                                     ))}
                                     {pet.talents?.length > 3 && (
-                                        <span className="text-xs px-1.5 py-0.5 text-foreground/50">
+                                        <span className="text-xs px-2 py-1 text-white/40 italic">
                                             +{pet.talents.length - 3} more
                                         </span>
                                     )}
