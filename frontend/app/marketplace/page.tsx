@@ -38,6 +38,13 @@ export default function MarketplacePage() {
 
     const SCHOOLS = ["All", "Fire", "Ice", "Storm", "Life", "Myth", "Death", "Balance"];
 
+    const isMaxStats = (stats: any) => {
+        if (!stats) return false;
+        return stats.strength >= 255 && stats.intellect >= 250 && stats.agility >= 260 && stats.will >= 260 && stats.power >= 250;
+    };
+
+    const SET_BONUS_PETS = ["Scaly Frillasaur", "Scratchy Frillasaur", "Stompy Frillasaur", "Snappy Frillasaur"];
+
     return (
         <main className="min-h-screen p-4 md:p-8 font-sans">
             <Spellbook title="Hatching Kiosk">
@@ -80,8 +87,26 @@ export default function MarketplacePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {listings.map((listing) => (
                             <div key={listing.id} className="bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-accent-gold/30 hover:border-accent-gold hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] transition-all relative group">
-                                <div className="absolute top-2 right-2 px-2 py-1 bg-accent-gold text-black rounded text-xs font-bold shadow-sm">
-                                    {listing.price?.amount} {listing.price?.type}
+                                <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+                                    {listing.price?.type === 'Free' ? (
+                                        <div className="px-2 py-1 bg-blue-500 text-white rounded text-xs font-bold shadow-sm border border-blue-300">
+                                            Lending
+                                        </div>
+                                    ) : (
+                                        <div className="px-2 py-1 bg-accent-gold text-black rounded text-xs font-bold shadow-sm">
+                                            {listing.price?.amount} {listing.price?.type}
+                                        </div>
+                                    )}
+                                    {isMaxStats(listing.maxPossibleStats) && (
+                                        <div className="px-2 py-1 bg-purple-500 text-white rounded text-xs font-bold shadow-sm border border-purple-300 animate-pulse">
+                                            2.0 Stats
+                                        </div>
+                                    )}
+                                    {SET_BONUS_PETS.includes(listing.petType) && (
+                                        <div className="px-2 py-1 bg-green-600 text-white rounded text-xs font-bold shadow-sm border border-green-400">
+                                            Set Bonus
+                                        </div>
+                                    )}
                                 </div>
 
                                 <h3 className="font-serif font-bold text-xl text-accent-gold mb-1 tracking-wide">{listing.petType}</h3>

@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { revalidatePath } from "next/cache";
+import { calculateAllPotentials } from "@/lib/talent-formulas";
 
 export async function savePet(petData: any) {
     const session = await auth();
@@ -113,7 +114,27 @@ export async function listPetInMarketplace(petId: string, listingData: any, disc
             throw new Error("A Discord Username is required to list pets in the Kiosk.");
         }
 
-        // 1. Create listing
+        // 1. Apply Jewel Bonus if present
+        let statsToCalculate = { ...listingData.currentStats };
+        if (listingData.socketedJewel) {
+            const jewelMap: Record<string, { stat: string, amount: number }> = {
+                'mighty': { stat: 'strength', amount: 65 },
+                'thinking_cap': { stat: 'will', amount: 65 },
+                'cautious': { stat: 'agility', amount: 65 },
+                'brilliant': { stat: 'intellect', amount: 65 },
+                'powerful': { stat: 'power', amount: 65 }
+            };
+            const bonus = jewelMap[listingData.socketedJewel];
+            if (bonus) {
+                // @ts-ignore
+                statsToCalculate[bonus.stat] = (statsToCalculate[bonus.stat] || 0) + bonus.amount;
+            }
+        }
+
+        // 2. Calculate stats
+        const potentials = calculateAllPotentials(statsToCalculate);
+
+        // 3. Create listing
         await db.collection("marketplace_listings").add({
             petId: petId,
             userId: session.user.id,
@@ -123,7 +144,9 @@ export async function listPetInMarketplace(petId: string, listingData: any, disc
                 // NO EMAIL FALLBACK
             },
             ...listingData,
-            price: {
+            calculatedDamage: `${potentials.damage.dealer}%`,
+            calculatedResist: `${potentials.resist.proof}%`,
+            price: listingData.price || {
                 type: "Empowers",
                 amount: 50
             },

@@ -8,15 +8,14 @@ import Link from 'next/link';
 import { getPets, listPetInMarketplace, unlistPetFromMarketplace } from '@/app/actions';
 import { PetDetailsModal } from '@/components/PetDetailsModal';
 
-import { DiscordUsernameModal } from '@/components/DiscordUsernameModal';
+import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
 
 export default function MyPetsPage() {
     const { data: session, status } = useSession();
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedPet, setSelectedPet] = useState<any>(null);
-    const [showDiscordPrompt, setShowDiscordPrompt] = useState(false);
-    const [pendingPet, setPendingPet] = useState<any>(null);
+    const [listingConfigPet, setListingConfigPet] = useState<any>(null);
 
     useEffect(() => {
         async function fetchPets() {
@@ -39,44 +38,41 @@ export default function MyPetsPage() {
         fetchPets();
     }, [session, status]);
 
-    const handleListPet = async (pet: any, discordUsername?: string) => {
+    const handleOpenListingConfig = (pet: any) => {
+        setListingConfigPet(pet);
+    };
+
+    const handleConfirmListing = async (config: ListingConfig) => {
+        if (!listingConfigPet) return;
+
         try {
-            const result = await listPetInMarketplace(pet.id, {
-                petType: pet.petType,
-                petSchool: pet.petSchool,
-                petAge: pet.petAge,
-                currentStats: pet.currentStats,
-                maxPossibleStats: pet.maxPossibleStats,
-                talents: pet.talents,
-                calculatedDamage: "TBD",
-                calculatedResist: "TBD"
-            }, discordUsername);
+            const result = await listPetInMarketplace(listingConfigPet.id, {
+                petType: listingConfigPet.petType,
+                petSchool: listingConfigPet.petSchool,
+                petAge: listingConfigPet.petAge,
+                currentStats: listingConfigPet.currentStats,
+                maxPossibleStats: listingConfigPet.maxPossibleStats,
+                talents: listingConfigPet.talents,
+                socketedJewel: config.socketedJewel,
+                price: {
+                    type: config.priceType,
+                    amount: config.priceAmount
+                }
+            }, config.discordUsername);
 
             if (result.success) {
-                setPets(prev => prev.map(p => p.id === pet.id ? { ...p, listedInMarketplace: true } : p));
+                setPets(prev => prev.map(p => p.id === listingConfigPet.id ? { ...p, listedInMarketplace: true } : p));
                 alert("Pet listed successfully!");
-                if (selectedPet?.id === pet.id) {
+                if (selectedPet?.id === listingConfigPet.id) {
                     setSelectedPet((prev: any) => ({ ...prev, listedInMarketplace: true }));
                 }
-                setShowDiscordPrompt(false);
-                setPendingPet(null);
+                setListingConfigPet(null);
             } else {
-                if (result.error?.includes("Discord Username is required")) {
-                    setPendingPet(pet);
-                    setShowDiscordPrompt(true);
-                } else {
-                    throw new Error(result.error);
-                }
+                throw new Error(result.error);
             }
         } catch (error) {
             console.error("Error listing pet:", error);
             alert("Failed to list pet.");
-        }
-    };
-
-    const handleDiscordSubmit = (username: string) => {
-        if (pendingPet) {
-            handleListPet(pendingPet, username);
         }
     };
 
@@ -177,19 +173,17 @@ export default function MyPetsPage() {
                 <PetDetailsModal
                     pet={selectedPet}
                     onClose={() => setSelectedPet(null)}
-                    onListInMarketplace={handleListPet}
+                    onListInMarketplace={handleOpenListingConfig}
                     onUnlistFromMarketplace={handleUnlistPet}
                 />
             )}
 
-            {/* Discord Username Prompt */}
-            <DiscordUsernameModal
-                isOpen={showDiscordPrompt}
-                onClose={() => {
-                    setShowDiscordPrompt(false);
-                    setPendingPet(null);
-                }}
-                onSubmit={handleDiscordSubmit}
+            {/* Listing Configuration Modal */}
+            <ListingConfigurationModal
+                isOpen={!!listingConfigPet}
+                onClose={() => setListingConfigPet(null)}
+                onConfirm={handleConfirmListing}
+                pet={listingConfigPet}
             />
         </main>
     );
