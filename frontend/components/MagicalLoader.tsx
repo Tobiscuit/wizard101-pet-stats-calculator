@@ -26,7 +26,7 @@ export function MagicalLoader() {
     }, []);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <div className="relative bg-[#1a1a2e] border-2 border-accent-gold p-8 rounded-xl shadow-2xl max-w-sm w-full mx-4 text-center overflow-hidden">
                 {/* Magical Glow Effects */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-gold to-transparent animate-pulse" />

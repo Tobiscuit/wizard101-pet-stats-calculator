@@ -35,14 +35,38 @@ interface PetScannerProps {
 
 export function PetScanner({ onScanComplete }: PetScannerProps) {
     const [isScanning, setIsScanning] = useState(false);
+    const [isSelecting, setIsSelecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
+        if (!file) {
+            setIsSelecting(false);
+            return;
+        }
 
+        // Transition from selecting to scanning
+        setIsSelecting(false);
         await processImage(file);
+    };
+
+    const handleStartScan = () => {
+        setIsSelecting(true);
+        setError(null);
+
+        // Trigger file input
+        fileInputRef.current?.click();
+
+        // Detect if user cancels file selection
+        // We wait for window focus, then check if file was selected after a short delay
+        window.addEventListener('focus', () => {
+            setTimeout(() => {
+                if (fileInputRef.current && fileInputRef.current.files?.length === 0) {
+                    setIsSelecting(false);
+                }
+            }, 500);
+        }, { once: true });
     };
 
     const processImage = async (file: File) => {
@@ -92,7 +116,7 @@ export function PetScanner({ onScanComplete }: PetScannerProps) {
         }
     };
 
-    if (isScanning) {
+    if (isScanning || isSelecting) {
         return <MagicalLoader />;
     }
 
@@ -108,8 +132,8 @@ export function PetScanner({ onScanComplete }: PetScannerProps) {
 
             <div className="flex gap-4">
                 <MagicalButton
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isScanning}
+                    onClick={handleStartScan}
+                    disabled={isScanning || isSelecting}
                     size="lg"
                     className="min-w-[200px]"
                 >
