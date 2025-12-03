@@ -304,9 +304,16 @@ export async function getUserProfile() {
         const db = getAdminFirestore();
         const doc = await db.collection("users").doc(session.user.id).get();
         if (doc.exists) {
-            return { success: true, profile: doc.data() };
-        }
-        return { success: false, error: "Profile not found" };
+            const data = doc.data();
+            return {
+                success: true,
+                profile: {
+                    ...data,
+                    lastSeen: data?.lastSeen?.toDate?.()?.toISOString() || null,
+                    updatedAt: data?.updatedAt?.toDate?.()?.toISOString() || null
+                }
+            };
+        } return { success: false, error: "Profile not found" };
     } catch (error: any) {
         console.error("Error fetching user profile:", error);
         return { success: false, error: error.message };
