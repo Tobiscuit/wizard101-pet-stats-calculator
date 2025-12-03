@@ -174,166 +174,167 @@ export function Calculator() {
                     </div>
 
                     <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                            onClick={() => {
-                                setPetInfo(prev => ({ ...prev, type: undefined }));
-                            }}
-                            className="text-xs text-accent-blue hover:underline"
+                        onClick={() => {
+                            setPetInfo(prev => ({ ...prev, type: undefined }));
+                        }}
+                        className="text-xs text-white/40 hover:text-accent-gold transition-colors flex items-center gap-1 mx-auto"
                         >
-                            Incorrect? Edit Details
-                        </button>
+                        <span className="sr-only">Edit</span>
+                        <span>Not the right pet? Try again</span>
+                    </button>
+                </div>
+                </div>
+    )
+}
+
+{/* Stats Input Section */ }
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="space-y-4">
+        <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
+            Pet Stats
+        </h2>
+
+        {(Object.keys(BASE_CAPS) as Array<keyof Stats>).map((stat) => (
+            <div key={stat} className="flex items-center gap-4">
+                <label className="w-24 capitalize font-serif text-lg">{stat}</label>
+                <div className="flex-1 relative">
+                    <input
+                        type="number"
+                        value={currentStats[stat]}
+                        onChange={(e) => handleStatChange(stat, e.target.value)}
+                        onBlur={() => handleBlur(stat)}
+                        className={clsx(
+                            "w-full bg-[#F5E6C4] border-b-2 border-[#8B4513]/50",
+                            "px-2 py-1 text-xl font-mono text-[#2C1A0B]",
+                            "focus:outline-none focus:border-accent-blue focus:bg-white/50",
+                            "transition-colors duration-200",
+                            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        )}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
+                        / {maxStats[stat]}
+                    </div>
+                </div>
+            </div>
+        ))}
+    </div>
+
+    {/* Results Section */}
+    <div className="space-y-6">
+        <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
+            Calculated Potential
+        </h2>
+
+        {/* Damage Card */}
+        <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
+            <div className="flex items-center gap-2 mb-3 text-school-fire">
+                <Sword className="w-6 h-6" />
+                <h3 className="text-xl font-bold">Damage</h3>
+            </div>
+            <div className="space-y-2">
+                <div className="flex justify-between">
+                    <span>Dealer:</span>
+                    <span className="font-bold text-xl">{potentials.damage.dealer}%</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Giver:</span>
+                    <span className="font-bold text-xl">{potentials.damage.giver}%</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Boon:</span>
+                    <span className="font-bold text-xl">{potentials.damage.boon}%</span>
+                </div>
+            </div>
+        </div>
+
+        {/* Resist Card */}
+        <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
+            <div className="flex items-center gap-2 mb-3 text-school-ice">
+                <Shield className="w-6 h-6" />
+                <h3 className="text-xl font-bold">Resistance</h3>
+            </div>
+            <div className="space-y-2">
+                <div className="flex justify-between">
+                    <span>Spell-Proof:</span>
+                    <span className="font-bold text-xl">{potentials.resist.proof}%</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Spell-Defying:</span>
+                    <span className="font-bold text-xl">{potentials.resist.defy}%</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>School Ward:</span>
+                    <span className="font-bold text-xl">{potentials.resist.ward}%</span>
+                </div>
+            </div>
+        </div>
+
+        {/* Pierce Card */}
+        <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
+            <div className="flex items-center gap-2 mb-3 text-yellow-500">
+                <Sword className="w-6 h-6 rotate-45" />
+                <h3 className="text-xl font-bold">Pierce</h3>
+            </div>
+            <div className="space-y-2">
+                <div className="flex justify-between">
+                    <span>Armor Breaker:</span>
+                    <span className="font-bold text-xl">{potentials.pierce.breaker}%</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Armor Piercer:</span>
+                    <span className="font-bold text-xl">{potentials.pierce.piercer}%</span>
+                </div>
+            </div>
+        </div>
+    </div >
+</div >
+
+{/* Talents & Advice */ }
+{
+    (talents.length > 0 || advice) && (
+        <div className="space-y-4 pt-4 border-t border-accent-gold/30">
+            {talents.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-serif font-bold text-accent-gold mb-2">Manifested Talents</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {talents.map((talent, i) => (
+                            <span key={i} className="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-sm">
+                                {talent}
+                            </span>
+                        ))}
                     </div>
                 </div>
             )}
 
-            {/* Stats Input Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                    <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
-                        Pet Stats
-                    </h2>
-
-                    {(Object.keys(BASE_CAPS) as Array<keyof Stats>).map((stat) => (
-                        <div key={stat} className="flex items-center gap-4">
-                            <label className="w-24 capitalize font-serif text-lg">{stat}</label>
-                            <div className="flex-1 relative">
-                                <input
-                                    type="number"
-                                    value={currentStats[stat]}
-                                    onChange={(e) => handleStatChange(stat, e.target.value)}
-                                    onBlur={() => handleBlur(stat)}
-                                    className={clsx(
-                                        "w-full bg-[#F5E6C4] border-b-2 border-[#8B4513]/50",
-                                        "px-2 py-1 text-xl font-mono text-[#2C1A0B]",
-                                        "focus:outline-none focus:border-accent-blue focus:bg-white/50",
-                                        "transition-colors duration-200",
-                                        "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                    )}
-                                />
-                                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
-                                    / {maxStats[stat]}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+            {advice && (
+                <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
+                    <h3 className="text-lg font-serif font-bold text-blue-300 mb-1 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        Gamma's Wisdom
+                    </h3>
+                    <p className="text-sm text-blue-100/90 italic">
+                        "{advice}"
+                    </p>
                 </div>
+            )}
+        </div>
+    )
+}
 
-                {/* Results Section */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
-                        Calculated Potential
-                    </h2>
-
-                    {/* Damage Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-school-fire">
-                            <Sword className="w-6 h-6" />
-                            <h3 className="text-xl font-bold">Damage</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Dealer:</span>
-                                <span className="font-bold text-xl">{potentials.damage.dealer}%</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Giver:</span>
-                                <span className="font-bold text-xl">{potentials.damage.giver}%</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Boon:</span>
-                                <span className="font-bold text-xl">{potentials.damage.boon}%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Resist Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-school-ice">
-                            <Shield className="w-6 h-6" />
-                            <h3 className="text-xl font-bold">Resistance</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Spell-Proof:</span>
-                                <span className="font-bold text-xl">{potentials.resist.proof}%</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Spell-Defying:</span>
-                                <span className="font-bold text-xl">{potentials.resist.defy}%</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>School Ward:</span>
-                                <span className="font-bold text-xl">{potentials.resist.ward}%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Pierce Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-yellow-500">
-                            <Sword className="w-6 h-6 rotate-45" />
-                            <h3 className="text-xl font-bold">Pierce</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Armor Breaker:</span>
-                                <span className="font-bold text-xl">{potentials.pierce.breaker}%</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Armor Piercer:</span>
-                                <span className="font-bold text-xl">{potentials.pierce.piercer}%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div >
-            </div >
-
-            {/* Talents & Advice */}
-            {
-                (talents.length > 0 || advice) && (
-                    <div className="space-y-4 pt-4 border-t border-accent-gold/30">
-                        {talents.length > 0 && (
-                            <div>
-                                <h3 className="text-lg font-serif font-bold text-accent-gold mb-2">Manifested Talents</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {talents.map((talent, i) => (
-                                        <span key={i} className="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-sm">
-                                            {talent}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {advice && (
-                            <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
-                                <h3 className="text-lg font-serif font-bold text-blue-300 mb-1 flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4" />
-                                    Gamma's Wisdom
-                                </h3>
-                                <p className="text-sm text-blue-100/90 italic">
-                                    "{advice}"
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                )
-            }
-
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-4 items-center pt-8">
+{/* Action Buttons */ }
+<div className="flex flex-col gap-4 items-center pt-8">
 
 
-                <MagicalButton
-                    onClick={handleSavePet}
-                    disabled={isSaving}
-                    size="lg"
-                    className="min-w-[200px]"
-                >
-                    {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    {session ? "Save to My Pets" : "Login to Save"}
-                </MagicalButton>
-            </div>
+    <MagicalButton
+        onClick={handleSavePet}
+        disabled={isSaving}
+        size="lg"
+        className="min-w-[200px]"
+    >
+        {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+        {session ? "Save to My Pets" : "Login to Save"}
+    </MagicalButton>
+</div>
         </div >
     );
 }

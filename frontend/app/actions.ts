@@ -60,7 +60,14 @@ export async function getPets() {
             updatedAt: doc.data().updatedAt?.toDate?.()?.toISOString() || new Date().toISOString()
         }));
 
-        return { success: true, pets };
+        return {
+            success: true,
+            pets,
+            debug: {
+                userId: session.user.id,
+                count: pets.length
+            }
+        };
     } catch (error: any) {
         console.error("Server Action getPets Error:", error);
         return { success: false, error: error.message };

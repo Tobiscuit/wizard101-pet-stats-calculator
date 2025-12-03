@@ -29,6 +29,7 @@ export default function MyPetsPage() {
                     ]);
 
                     if (petsResult.success && petsResult.pets) {
+                        console.log("Debug getPets:", petsResult.debug);
                         setPets(petsResult.pets);
                     }
 
