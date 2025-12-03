@@ -1,7 +1,8 @@
 import { ImageResponse } from 'next/og';
 import { getListing } from '@/app/actions';
 
-export const runtime = 'edge';
+// Using nodejs runtime because we need firebase-admin
+export const runtime = 'nodejs';
 
 export const size = {
     width: 1200,
