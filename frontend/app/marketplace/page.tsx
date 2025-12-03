@@ -110,6 +110,35 @@ export default function MarketplacePage() {
                                             Set Bonus
                                         </div>
                                     )}
+                                    {/* Last Seen Badge */}
+                                    {(() => {
+                                        if (!listing.ownerLastSeen) return null;
+                                        const lastSeen = new Date(listing.ownerLastSeen);
+                                        const now = new Date();
+                                        const diffMins = (now.getTime() - lastSeen.getTime()) / (1000 * 60);
+
+                                        if (diffMins < 10) {
+                                            return (
+                                                <div className="px-2 py-0.5 bg-green-500 text-white rounded text-[10px] font-bold shadow-sm border border-green-400 uppercase tracking-wider flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                                                    Online
+                                                </div>
+                                            );
+                                        } else if (diffMins < 60) {
+                                            return (
+                                                <div className="px-2 py-0.5 bg-white/10 text-white/70 rounded text-[10px] font-bold shadow-sm border border-white/10 uppercase tracking-wider">
+                                                    Active {Math.floor(diffMins)}m ago
+                                                </div>
+                                            );
+                                        } else if (diffMins < 1440) {
+                                            return (
+                                                <div className="px-2 py-0.5 bg-white/5 text-white/50 rounded text-[10px] font-bold shadow-sm border border-white/5 uppercase tracking-wider">
+                                                    Active {Math.floor(diffMins / 60)}h ago
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
                                 </div>
 
                                 {/* Header */}

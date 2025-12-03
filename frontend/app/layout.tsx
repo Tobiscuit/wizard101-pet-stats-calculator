@@ -21,6 +21,8 @@ import { SessionProvider } from "next-auth/react";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { Navbar } from "@/components/Navbar";
 
+import { PresenceTracker } from "@/components/PresenceTracker";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +34,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <ServiceWorkerRegister />
+          <PresenceTracker />
           <Navbar />
           {children}
         </SessionProvider>

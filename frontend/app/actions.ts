@@ -158,11 +158,28 @@ export async function getMarketplaceListings() {
         const listingsRef = db.collection("marketplace_listings");
         const snapshot = await listingsRef.orderBy("listedAt", "desc").limit(50).get();
 
-        const listings = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            listedAt: doc.data().listedAt?.toDate?.()?.toISOString() || new Date().toISOString()
-        }));
+        // Get all unique user IDs to fetch presence
+        const userIds = new Set(snapshot.docs.map(doc => doc.data().userId));
+        const userDocsPromises = Array.from(userIds).map(uid => db.collection("users").doc(uid).get());
+        const userDocs = await Promise.all(userDocsPromises);
+
+        const userPresenceMap: Record<string, Date | null> = {};
+        userDocs.forEach(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                userPresenceMap[doc.id] = data?.lastSeen?.toDate() || null;
+            }
+        });
+
+        const listings = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                listedAt: data.listedAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+                ownerLastSeen: userPresenceMap[data.userId] ? userPresenceMap[data.userId]?.toISOString() : null
+            };
+        });
 
         return { success: true, listings };
     } catch (error: any) {
@@ -235,5 +252,22 @@ export async function deletePet(petId: string) {
     } catch (error: any) {
         console.error("Server Action deletePet Error:", error);
         return { success: false, error: error.message };
+    }
+}
+
+export async function updateLastSeen() {
+    const session = await auth();
+    if (!session?.user?.id) return;
+
+    try {
+        const db = getAdminFirestore();
+        await db.collection("users").doc(session.user.id).set({
+            lastSeen: new Date(),
+            updatedAt: new Date()
+        }, { merge: true });
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating last seen:", error);
+        return { success: false };
     }
 }
