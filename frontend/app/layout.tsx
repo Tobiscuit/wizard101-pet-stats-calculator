@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 import { SessionProvider } from "next-auth/react";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { Navbar } from "@/components/Navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 import { PresenceTracker } from "@/components/PresenceTracker";
 
@@ -37,6 +38,14 @@ export default function RootLayout({
           <PresenceTracker />
           <Navbar />
           {children}
+          <footer className="py-6 text-center text-sm text-white/30 border-t border-white/5 mt-12">
+            <div className="flex justify-center gap-4">
+              <a href="/privacy" className="hover:text-white/50 transition-colors">Privacy Policy</a>
+              <span>•</span>
+              <span>Wizard101 is a trademark of KingsIsle Entertainment. Not affiliated.</span>
+            </div>
+          </footer>
+          <Toaster />
         </SessionProvider>
       </body>
     </html>
