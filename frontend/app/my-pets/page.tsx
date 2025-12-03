@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { Spellbook } from '@/components/Spellbook';
 import { Plus, Loader2, Store, Check } from 'lucide-react';
 import Link from 'next/link';
-import { getPets, listPetInMarketplace } from '@/app/actions';
+import { getPets, listPetInMarketplace, unlistPetFromMarketplace } from '@/app/actions';
 import { PetDetailsModal } from '@/components/PetDetailsModal';
 
 export default function MyPetsPage() {
@@ -60,6 +60,27 @@ export default function MyPetsPage() {
         } catch (error) {
             console.error("Error listing pet:", error);
             alert("Failed to list pet.");
+        }
+    };
+
+    const handleUnlistPet = async (pet: any) => {
+        if (!confirm(`Remove ${pet.petNickname || pet.petType} from the marketplace?`)) return;
+
+        try {
+            const result = await unlistPetFromMarketplace(pet.id);
+
+            if (result.success) {
+                setPets(prev => prev.map(p => p.id === pet.id ? { ...p, listedInMarketplace: false } : p));
+                alert("Pet unlisted successfully!");
+                if (selectedPet?.id === pet.id) {
+                    setSelectedPet((prev: any) => ({ ...prev, listedInMarketplace: false }));
+                }
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error("Error unlisting pet:", error);
+            alert("Failed to unlist pet.");
         }
     };
 
@@ -140,6 +161,7 @@ export default function MyPetsPage() {
                     pet={selectedPet}
                     onClose={() => setSelectedPet(null)}
                     onListInMarketplace={handleListPet}
+                    onUnlistFromMarketplace={handleUnlistPet}
                 />
             )}
         </main>

@@ -1,16 +1,18 @@
 'use client';
 
 import React from 'react';
-import { X, Shield, Sword, Sparkles, Share2 } from 'lucide-react';
+import { X, Shield, Sword, Sparkles, Share2, Trash2 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { calculateTalentValue } from '@/lib/talent-formulas';
 
 type PetDetailsModalProps = {
     pet: any;
     onClose: () => void;
     onListInMarketplace?: (pet: any) => void;
+    onUnlistFromMarketplace?: (pet: any) => void;
 };
 
-export function PetDetailsModal({ pet, onClose, onListInMarketplace }: PetDetailsModalProps) {
+export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFromMarketplace }: PetDetailsModalProps) {
     if (!pet) return null;
 
     // Calculate stats for display (reusing logic from Calculator roughly)
@@ -93,24 +95,35 @@ export function PetDetailsModal({ pet, onClose, onListInMarketplace }: PetDetail
                         <div>
                             <h3 className="text-lg font-serif font-bold text-white/90 mb-3">Manifested Talents</h3>
                             <div className="flex flex-wrap gap-2">
-                                {pet.talents.map((talent: string, i: number) => (
-                                    <span key={i} className="px-3 py-1 bg-accent-gold/10 border border-accent-gold/30 text-accent-gold rounded-full text-sm">
-                                        {talent}
-                                    </span>
-                                ))}
+                                {pet.talents.map((talent: string, i: number) => {
+                                    const val = calculateTalentValue(talent, pet.currentStats);
+                                    return (
+                                        <span key={i} className="px-3 py-1 bg-accent-gold/10 border border-accent-gold/30 text-accent-gold rounded-full text-sm flex items-center gap-2">
+                                            {talent}
+                                            {val && <span className="text-white/70 font-mono text-xs">({val})</span>}
+                                        </span>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
 
                     {/* Gemini Advice (if saved) */}
-                    {/* Note: We didn't explicitly save 'advice' in the savePet action earlier, 
-                        so it might be missing from older saves. But let's check if we can add it or if it's there. 
-                        Wait, I checked savePet in actions.ts and it DOES NOT save advice. 
-                        I need to update savePet to save advice too! */}
+                    {pet.advice && (
+                        <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
+                            <h3 className="text-lg font-serif font-bold text-blue-300 mb-1 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4" />
+                                Gemini's Insight
+                            </h3>
+                            <p className="text-sm text-blue-100/90 italic">
+                                "{pet.advice}"
+                            </p>
+                        </div>
+                    )}
 
                     {/* Marketplace Action */}
-                    {!pet.listedInMarketplace && onListInMarketplace && (
-                        <div className="pt-6 border-t border-white/10 flex justify-end">
+                    <div className="pt-6 border-t border-white/10 flex justify-end gap-4">
+                        {!pet.listedInMarketplace && onListInMarketplace && (
                             <button
                                 onClick={() => onListInMarketplace(pet)}
                                 className="flex items-center gap-2 px-6 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
@@ -118,8 +131,18 @@ export function PetDetailsModal({ pet, onClose, onListInMarketplace }: PetDetail
                                 <Share2 className="w-4 h-4" />
                                 List in Kiosk
                             </button>
-                        </div>
-                    )}
+                        )}
+
+                        {pet.listedInMarketplace && onUnlistFromMarketplace && (
+                            <button
+                                onClick={() => onUnlistFromMarketplace(pet)}
+                                className="flex items-center gap-2 px-6 py-2 bg-red-900/50 text-red-200 border border-red-500/30 rounded-lg hover:bg-red-900/80 transition-colors"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Unlist from Kiosk
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
