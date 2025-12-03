@@ -205,32 +205,14 @@ export default function MarketplacePage() {
                                     </div>
                                 </div>
 
-                                {/* Stats Grid */}
-                                <div className="grid grid-cols-2 gap-3 mb-4">
-                                    <div className="bg-black/30 p-2 rounded border border-white/5">
-                                        <div className="text-xs text-white/50 uppercase tracking-wider mb-1">Damage</div>
-                                        <div className="text-lg font-bold text-accent-blue">{listing.calculatedDamage}%</div>
-                                    </div>
-                                    <div className="bg-black/30 p-2 rounded border border-white/5">
-                                        <div className="text-xs text-white/50 uppercase tracking-wider mb-1">Resist</div>
-                                        <div className="text-lg font-bold text-accent-blue">{listing.calculatedResist}%</div>
-                                    </div>
-                                </div>
-
                                 {/* Talents List */}
                                 <div className="space-y-1.5">
                                     {listing.talents.slice(0, 5).map((talent: string, i: number) => {
-                                        // Fix: calculateTalentValue expects (talent, stats, jewel)
-                                        // But checking lib/talent-formulas.ts, it seems it might only take 2 args or return string/number?
-                                        // Let's assume it returns a number or null.
                                         const val = calculateTalentValue(talent, listing.currentStats);
-                                        // Note: applyJewelBonus is likely handled inside or we should pass modified stats.
-                                        // If calculateTalentValue returns a string (like "10%"), we need to parse or just display.
-
                                         return (
                                             <div key={i} className="flex justify-between items-center text-sm px-2 py-1 rounded bg-white/5 border border-white/5">
                                                 <span className="text-white/80">{talent}</span>
-                                                {val && <span className="text-accent-gold font-mono text-xs">{val}%</span>}
+                                                {val && <span className="text-accent-gold font-mono text-xs">{val}</span>}
                                             </div>
                                         );
                                     })}
