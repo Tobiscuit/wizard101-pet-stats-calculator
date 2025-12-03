@@ -10,9 +10,10 @@ type PetDetailsModalProps = {
     onClose: () => void;
     onListInMarketplace?: (pet: any) => void;
     onUnlistFromMarketplace?: (pet: any) => void;
+    onDelete?: (pet: any) => void;
 };
 
-export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFromMarketplace }: PetDetailsModalProps) {
+export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFromMarketplace, onDelete }: PetDetailsModalProps) {
     if (!pet) return null;
 
     const potentials = pet.currentStats ? calculateAllPotentials(pet.currentStats) : null;
@@ -136,26 +137,42 @@ export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFro
                     )}
 
                     {/* Marketplace Action */}
-                    <div className="pt-6 border-t border-white/10 flex justify-end gap-4">
-                        {!pet.listedInMarketplace && onListInMarketplace && (
+                    <div className="pt-6 border-t border-white/10 flex justify-between items-center gap-4">
+                        {onDelete && (
                             <button
-                                onClick={() => onListInMarketplace(pet)}
-                                className="flex items-center gap-2 px-6 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+                                onClick={() => {
+                                    if (confirm("Are you sure you want to release this pet? This cannot be undone.")) {
+                                        onDelete(pet);
+                                    }
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors text-sm"
                             >
-                                <Share2 className="w-4 h-4" />
-                                List in Kiosk
+                                <Trash2 className="w-4 h-4" />
+                                Release Pet
                             </button>
                         )}
 
-                        {pet.listedInMarketplace && onUnlistFromMarketplace && (
-                            <button
-                                onClick={() => onUnlistFromMarketplace(pet)}
-                                className="flex items-center gap-2 px-6 py-2 bg-red-900/50 text-red-200 border border-red-500/30 rounded-lg hover:bg-red-900/80 transition-colors"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                Unlist from Kiosk
-                            </button>
-                        )}
+                        <div className="flex gap-4">
+                            {!pet.listedInMarketplace && onListInMarketplace && (
+                                <button
+                                    onClick={() => onListInMarketplace(pet)}
+                                    className="flex items-center gap-2 px-6 py-2 bg-accent-blue text-white rounded-lg hover:bg-accent-blue/80 transition-colors"
+                                >
+                                    <Share2 className="w-4 h-4" />
+                                    List in Kiosk
+                                </button>
+                            )}
+
+                            {pet.listedInMarketplace && onUnlistFromMarketplace && (
+                                <button
+                                    onClick={() => onUnlistFromMarketplace(pet)}
+                                    className="flex items-center gap-2 px-6 py-2 bg-red-900/50 text-red-200 border border-red-500/30 rounded-lg hover:bg-red-900/80 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                    Unlist from Kiosk
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

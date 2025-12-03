@@ -205,3 +205,35 @@ export async function unlistPetFromMarketplace(petId: string) {
         return { success: false, error: error.message };
     }
 }
+
+export async function deletePet(petId: string) {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const db = getAdminFirestore();
+        const batch = db.batch();
+
+        // 1. Delete pet document
+        const petRef = db.collection("user_pets").doc(petId);
+        batch.delete(petRef);
+
+        // 2. Delete any associated marketplace listings
+        const listingsRef = db.collection("marketplace_listings");
+        const snapshot = await listingsRef.where("petId", "==", petId).get();
+        snapshot.docs.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+
+        revalidatePath('/my-pets');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Server Action deletePet Error:", error);
+        return { success: false, error: error.message };
+    }
+}

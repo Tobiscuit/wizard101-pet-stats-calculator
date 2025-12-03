@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { Spellbook } from '@/components/Spellbook';
 import { Plus, Loader2, Store, Check } from 'lucide-react';
 import Link from 'next/link';
-import { getPets, listPetInMarketplace, unlistPetFromMarketplace } from '@/app/actions';
+import { getPets, listPetInMarketplace, unlistPetFromMarketplace, deletePet } from '@/app/actions';
 import { PetDetailsModal } from '@/components/PetDetailsModal';
 
 import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
@@ -97,6 +97,22 @@ export default function MyPetsPage() {
         }
     };
 
+    const handleDeletePet = async (pet: any) => {
+        try {
+            const result = await deletePet(pet.id);
+            if (result.success) {
+                setPets(prev => prev.filter(p => p.id !== pet.id));
+                setSelectedPet(null);
+                alert("Pet released successfully.");
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error("Error deleting pet:", error);
+            alert("Failed to delete pet.");
+        }
+    };
+
     if (status === 'loading' || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -175,6 +191,7 @@ export default function MyPetsPage() {
                     onClose={() => setSelectedPet(null)}
                     onListInMarketplace={handleOpenListingConfig}
                     onUnlistFromMarketplace={handleUnlistPet}
+                    onDelete={handleDeletePet}
                 />
             )}
 
