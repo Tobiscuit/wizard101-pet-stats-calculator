@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef } from "react"
 import { motion, useMotionTemplate, useMotionValue } from "motion/react"
 import { cn } from "@/lib/utils"
 
-interface MagicCardProps {
+interface MagicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode
   className?: string
   gradientSize?: number
@@ -22,6 +22,7 @@ export function MagicCard({
   gradientOpacity = 0.8,
   gradientFrom = "#9E7AFF",
   gradientTo = "#FE8BBB",
+  ...props
 }: MagicCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const mouseX = useMotionValue(-gradientSize)
@@ -55,6 +56,7 @@ export function MagicCard({
         "group relative flex size-full overflow-hidden rounded-xl border bg-card text-card-foreground shadow",
         className
       )}
+      {...props}
     >
       <div className="relative z-10 size-full">{children}</div>
       <motion.div
