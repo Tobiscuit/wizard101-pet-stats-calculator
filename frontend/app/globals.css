@@ -41,7 +41,8 @@
     --chart-5: 250 50% 55%; /* Violet */
 
     /* Sidebar Variables */
-    --sidebar-background: 44 23% 92%; /* Slightly darker than main bg */
+    --sidebar: 44 23% 90%; /* Visible contrast against 94% bg */
+    --sidebar-background: 44 23% 90%;
     --sidebar-foreground: 200 15% 30%;
     --sidebar-primary: 196 100% 14%;
     --sidebar-primary-foreground: 44 23% 94%;
@@ -88,7 +89,8 @@
     --chart-4: 250 50% 55%;
     --chart-5: 170 50% 45%;
 
-    --sidebar-background: 196 30% 9%;
+    --sidebar: 196 30% 7%; /* Deep Void, visible against 10% bg */
+    --sidebar-background: 196 30% 7%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 44 80% 60%;
     --sidebar-primary-foreground: 196 30% 10%;
@@ -139,6 +141,7 @@
   --color-sidebar-primary: hsl(var(--sidebar-primary));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-background: hsl(var(--sidebar-background));
+  --color-sidebar: hsl(var(--sidebar));
 }
 
 @layer base {
