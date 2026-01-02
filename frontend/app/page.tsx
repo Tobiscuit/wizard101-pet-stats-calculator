@@ -126,7 +126,7 @@ export default function Home() {
         </div>
         <div className="flex gap-4">
           <Link href="/guilds">
-            <ShinyButton text="Join a Guild" className="bg-primary/10" />
+            <ShinyButton className="bg-primary/10">Join a Guild</ShinyButton>
           </Link>
           <Link href="/marketplace">
             <Button variant="outline" size="lg">Explore Market</Button>
