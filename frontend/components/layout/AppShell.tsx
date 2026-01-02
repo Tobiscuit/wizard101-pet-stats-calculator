@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { AppSidebar } from "./AppSidebar"
 import {
   Breadcrumb,
@@ -16,7 +17,19 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
+const ROUTE_NAMES: Record<string, string> = {
+  "/": "Dashboard",
+  "/calculator": "Calculator",
+  "/scanner": "Scanner",
+  "/my-pets": "My Pets",
+  "/login": "Login",
+  "/guilds": "Guild Directory",
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const currentPageName = ROUTE_NAMES[pathname] || "Page"
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -28,11 +41,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Platform</BreadcrumbLink>
+                  <BreadcrumbLink href="/">The Commons</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage>{currentPageName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
