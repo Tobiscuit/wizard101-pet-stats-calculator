@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +11,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fdf6e3" },
+    { media: "(prefers-color-scheme: dark)", color: "#11222a" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Pet Tome | Wizard101 Stats Calculator & Marketplace",
@@ -38,6 +45,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { AppShell } from "@/components/layout/AppShell"; // Added import for AppShell
 
 import { PresenceTracker } from "@/components/PresenceTracker";
+import { ThemeColorManager } from "@/components/ThemeColorManager";
 
 export default function RootLayout({
   children,
@@ -57,6 +65,7 @@ export default function RootLayout({
             disableTransitionOnChange
             >
             <PresenceTracker />
+            <ThemeColorManager />
 
             <AppShell>
                 {children}
