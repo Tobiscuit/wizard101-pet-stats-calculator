@@ -158,7 +158,7 @@ export function Calculator() {
             <PetScanner onScanComplete={handleScanComplete} />
 
             {petInfo.type && (
-                <div className="text-center mb-6 p-4 bg-background/50 backdrop-blur-sm rounded-xl border border-accent-gold/30 relative group shadow-lg">
+                <div className="text-center mb-6 p-4 bg-background/50 backdrop-blur-sm rounded-xl border relative group shadow-lg">
                     <Button
                         variant="ghost"
                         size="sm"
@@ -195,7 +195,7 @@ export function Calculator() {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                    <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
+                    <h2 className="text-2xl font-semibold border-b pb-2">
                         Pet Stats
                     </h2>
                     
@@ -225,7 +225,7 @@ export function Calculator() {
 
                 {/* Results Section */}
                 <div className="space-y-6">
-                    <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
+                    <h2 className="text-2xl font-semibold border-b pb-2">
                         Calculated Potential
                     </h2>
 
@@ -310,7 +310,7 @@ export function Calculator() {
             {/* Talents & Advice */}
             {
                 (talents.length > 0 || advice) && (
-                    <div className="space-y-4 pt-4 border-t border-accent-gold/30">
+                    <div className="space-y-4 pt-4 border-t">
                         {talents.length > 0 && (
                             <div>
                                 <h3 className="text-lg font-serif font-bold text-accent-gold mb-2">Manifested Talents</h3>
@@ -326,7 +326,7 @@ export function Calculator() {
 
                         {advice && (
                             <MagicCard 
-                                className="p-6 bg-blue-950/10 border-blue-500/20"
+                                className="p-6 bg-muted/50"
                                 gradientColor="var(--accent-blue)"
                                 gradientOpacity={0.1}
                             >

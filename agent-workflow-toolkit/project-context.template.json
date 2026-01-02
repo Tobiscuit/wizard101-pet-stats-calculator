@@ -1,0 +1,34 @@
+{
+  "name": "example-project",
+  "displayName": "Example Project",
+  "framework": "next | vite | nuxt | unknown",
+  "frameworkVersion": "x.x.x",
+  "language": "typescript | javascript",
+  "styling": {
+    "css": "tailwindcss@x.x | vanilla | scss",
+    "components": "shadcn-ui | radix | mui | chakra | none",
+    "primitives": "radix-ui | headless-ui | none"
+  },
+  "animations": [],
+  "fonts": [],
+  "features": {
+    "tables": "",
+    "forms": "",
+    "ai": "",
+    "auth": "",
+    "database": "",
+    "deployment": ""
+  },
+  "testing": {
+    "framework": "",
+    "libraries": []
+  },
+  "patterns": {
+    "stateManagement": "",
+    "dataFetching": "",
+    "theming": ""
+  },
+  "notes": {},
+  "detectedAt": "",
+  "lastUpdated": ""
+}

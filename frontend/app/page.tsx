@@ -1,12 +1,138 @@
-import { Spellbook } from "@/components/Spellbook";
-import { Calculator } from "@/components/Calculator";
+"use client"
+
+import { Calculator } from "@/components/Calculator"
+import { GridPattern } from "@/components/magicui/grid-pattern"
+import { MagicCard } from "@/components/magicui/magic-card"
+import { ShinyButton } from "@/components/magicui/shiny-button"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { 
+  BarChart, 
+  BookOpen, 
+  Calculator as CalculatorIcon, 
+  ScanLine, 
+  Scroll, 
+  Shield, 
+  Sparkles, 
+  Sword, 
+  Users 
+} from "lucide-react"
+import Link from "next/link"
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-4 md:p-8 font-sans">
-      <Spellbook title="Pet Stats Calculator">
-        <Calculator />
-      </Spellbook>
-    </main>
-  );
+    <div className="relative min-h-[calc(100vh-4rem)] w-full">
+      {/* Background Pattern */}
+      <GridPattern
+        width={30}
+        height={30}
+        x={-1}
+        y={-1}
+        className="stroke-gray-400/20 [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]"
+        strokeDasharray="4 2"
+      />
+
+      <div className="container mx-auto max-w-7xl pt-8 pb-16 space-y-12">
+        {/* Hero / Welcome */}
+        <div className="flex flex-col items-center text-center space-y-4 px-4">
+          <div className="inline-flex items-center rounded-full border border-accent-gold/30 bg-accent-gold/10 px-3 py-1 text-sm font-medium text-accent-gold backdrop-blur-sm">
+            <Sparkles className="mr-2 h-4 w-4" />
+            <span className="animate-pulse">New: Wizard Scanner (Alpha)</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tight text-foreground drop-shadow-md">
+            The <span className="text-accent-gold">Pet Tome</span>
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl font-light">
+            The ultimate community hub for Wizard101. Calculate stats, trade pets, and chronicle your journey.
+          </p>
+          <div className="flex items-center gap-4 pt-4">
+              <Link href="/scanner">
+                <ShinyButton>Launch Scanner</ShinyButton>
+              </Link>
+              <Link href="https://github.com" target="_blank">
+                <Button variant="outline" className="gap-2">
+                    <Users className="w-4 h-4"/> Join Guild
+                </Button>
+              </Link>
+          </div>
+        </div>
+
+        {/* Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+          <Link href="#calculator" className="group">
+            <MagicCard className="h-full cursor-pointer border-accent-gold/20 hover:border-accent-gold/50 transition-all duration-500" gradientColor="#FFD700" gradientOpacity={0.1}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-accent-gold">
+                  <CalculatorIcon className="w-5 h-5" />
+                  Stat Calculator
+                </CardTitle>
+                <CardDescription>Optimize your pet's potential.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Enter your pet's strength, will, and power to calculate precise talent values.
+              </CardContent>
+            </MagicCard>
+          </Link>
+
+          <Link href="/scanner" className="group">
+            <MagicCard className="h-full cursor-pointer border-accent-blue/20 hover:border-accent-blue/50 transition-all duration-500" gradientColor="#00A8FF" gradientOpacity={0.1}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-accent-blue">
+                  <ScanLine className="w-5 h-5" />
+                  Wizard Scanner
+                </CardTitle>
+                <CardDescription>AI-powered gear analysis.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                 Upload a screenshot of your wizard to extract stats, gear, and build your profile instantly.
+              </CardContent>
+            </MagicCard>
+          </Link>
+
+          <Link href="/guilds" className="group">
+            <MagicCard className="h-full cursor-pointer border-purple-500/20 hover:border-purple-500/50 transition-all duration-500" gradientColor="#A855F7" gradientOpacity={0.1}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-purple-400">
+                  <Shield className="w-5 h-5" />
+                  Guild Directory
+                </CardTitle>
+                <CardDescription>Find your magical family.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Browse active guilds, filter by activity (Social, Raiding, PvP), and apply directly.
+              </CardContent>
+            </MagicCard>
+          </Link>
+        </div>
+
+        {/* Main Calculator Section */}
+        <div id="calculator" className="scroll-mt-20">
+            <div className="flex items-center justify-between mb-6 px-4">
+                <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
+                    <Scroll className="w-6 h-6 text-accent-gold" />
+                    Interactive Calculator
+                </h2>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <BookOpen className="w-5 h-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>View Guide</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+            
+            {/* Embedded Calculator */}
+            <div className="max-w-4xl mx-auto">
+                <Calculator />
+            </div>
+        </div>
+      </div>
+    </div>
+  )
 }

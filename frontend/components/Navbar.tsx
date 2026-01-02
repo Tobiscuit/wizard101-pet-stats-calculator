@@ -1,3 +1,4 @@
+// DEPRECATED: This Navbar is being fast-tracked for retirement in favor of AppSidebar.
 'use client';
 
 import Link from 'next/link';

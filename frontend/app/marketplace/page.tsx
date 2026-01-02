@@ -1,232 +1,88 @@
-'use client';
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getMarketplaceListings } from "@/services/marketplace-mock"
+import { Search, ShoppingBag, Coins, Filter, Tag } from "lucide-react"
+import Link from "next/link"
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { Spellbook } from '@/components/Spellbook';
-import { Loader2, Search } from 'lucide-react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { clsx } from 'clsx';
-import { getMarketplaceListings } from '@/app/actions';
-import { calculateTalentValue, applyJewelBonus } from '@/lib/talent-formulas';
+export default async function MarketplacePage() {
+  const listings = await getMarketplaceListings()
 
-export default function MarketplacePage() {
-    const { data: session } = useSession();
-    const [listings, setListings] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [schoolFilter, setSchoolFilter] = useState<string>('All');
-    const [search, setSearch] = useState('');
-    const [sortOrder, setSortOrder] = useState<'newest' | 'damage' | 'resist'>('newest');
+  return (
+    <div className="container py-8 space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 className="text-4xl font-serif font-bold tracking-tight">Bazaar 2.0</h1>
+            <p className="text-muted-foreground mt-2">Trade pets, treasure cards, and services safely.</p>
+        </div>
+        <div className="flex w-full md:w-auto gap-2">
+            <Button size="lg" className="shadow-lg shadow-primary/20">
+                <Tag className="w-4 h-4 mr-2" />
+                Sell Item
+            </Button>
+        </div>
+      </div>
 
-    useEffect(() => {
-        async function fetchListings() {
-            try {
-                const result = await getMarketplaceListings();
-                if (result.success && result.listings) {
-                    let filtered = result.listings;
-                    if (schoolFilter !== 'All') {
-                        filtered = filtered.filter((l: any) => l.petSchool === schoolFilter);
-                    }
-                    setListings(filtered);
-                }
-            } catch (error) {
-                console.error("Error fetching marketplace listings:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
+      <Tabs defaultValue="all" className="w-full">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+             <TabsList className="bg-muted/50 border border-border w-full flex-wrap h-auto p-1">
+                <TabsTrigger value="all" className="flex-1">All Items</TabsTrigger>
+                <TabsTrigger value="pets" className="flex-1">Pets</TabsTrigger>
+                <TabsTrigger value="tc" className="flex-1">TCs</TabsTrigger>
+                <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
+            </TabsList>
+            
+            <div className="relative w-full md:w-72">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search listings..." className="pl-9 bg-background" />
+            </div>
+        </div>
 
-        fetchListings();
-    }, [schoolFilter]);
-
-    const SCHOOLS = ["All", "Fire", "Ice", "Storm", "Life", "Myth", "Death", "Balance"];
-
-    const isMaxStats = (stats: any) => {
-        if (!stats) return false;
-        return stats.strength >= 255 && stats.intellect >= 250 && stats.agility >= 260 && stats.will >= 260 && stats.power >= 250;
-    };
-
-    const SET_BONUS_PETS = ["Scaly Frillasaur", "Scratchy Frillasaur", "Stompy Frillasaur", "Snappy Frillasaur"];
-
-    const filteredListings = useMemo(() => {
-        let currentListings = [...listings];
-
-        // Apply school filter
-        if (schoolFilter !== 'All') {
-            currentListings = currentListings.filter((l: any) => l.petSchool === schoolFilter);
-        }
-
-        // Apply search filter
-        if (search) {
-            const lowerCaseSearch = search.toLowerCase();
-            currentListings = currentListings.filter(
-                (l: any) =>
-                    l.petType.toLowerCase().includes(lowerCaseSearch) ||
-                    l.petNickname?.toLowerCase().includes(lowerCaseSearch) ||
-                    l.talents.some((t: string) => t.toLowerCase().includes(lowerCaseSearch))
-            );
-        }
-
-        // Apply sorting
-        currentListings.sort((a, b) => {
-            if (sortOrder === 'newest') {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            } else if (sortOrder === 'damage') {
-                return b.calculatedDamage - a.calculatedDamage;
-            } else if (sortOrder === 'resist') {
-                return b.calculatedResist - a.calculatedResist;
-            }
-            return 0;
-        });
-
-        return currentListings;
-    }, [listings, schoolFilter, search, sortOrder]);
-
-    return (
-        <main className="min-h-screen p-4 md:p-8 font-sans">
-            <Spellbook title="Pet Pavilion Kiosk">
-                {/* Filters */}
-                <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 bg-black/40 p-4 rounded-lg border border-white/10">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
-                        <input
-                            type="text"
-                            placeholder="Search pets..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 bg-black/50 border border-white/10 rounded text-sm text-white focus:border-accent-gold/50 focus:outline-none transition-colors font-serif"
-                        />
-                    </div>
-
-                    <select
-                        value={schoolFilter}
-                        onChange={(e) => setSchoolFilter(e.target.value)}
-                        className="px-4 py-2 bg-black/50 border border-white/10 rounded text-sm text-white focus:border-accent-gold/50 focus:outline-none font-serif"
-                    >
-                        <option value="All">All Schools</option>
-                        {['Fire', 'Ice', 'Storm', 'Myth', 'Life', 'Death', 'Balance'].map(school => (
-                            <option key={school} value={school}>{school}</option>
-                        ))}
-                    </select>
-
-                    <select
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value as any)}
-                        className="px-4 py-2 bg-black/50 border border-white/10 rounded text-sm text-white focus:border-accent-gold/50 focus:outline-none font-serif"
-                    >
-                        <option value="newest">Newest First</option>
-                        <option value="damage">Highest Damage</option>
-                        <option value="resist">Highest Resist</option>
-                    </select>
-                </div>
-
-                {/* Listings Grid */}
-                {loading ? (
-                    <div className="flex justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-accent-gold" />
-                    </div>
-                ) : filteredListings.length === 0 ? (
-                    <div className="text-center py-12 text-white/60">
-                        <p className="text-xl font-serif mb-4">The Kiosk is empty.</p>
-                        <p>Be the first to list a pet from your tome!</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredListings.map((listing) => (
-                            <Link
-                                key={listing.id}
-                                href={`/marketplace/${listing.id}`}
-                                className="block bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-accent-gold/30 hover:border-accent-gold hover:shadow-[0_0_15px_rgba(255,215,0,0.2)] transition-all cursor-pointer group relative"
-                            >
-                                {/* Status Bar */}
-                                <div className="absolute top-0 right-0 left-0 p-2 flex justify-end gap-2 pointer-events-none">
-                                    {/* Lending Badge */}
-                                    {listing.price?.type === 'Free' ? (
-                                        <div className="px-2 py-0.5 bg-accent-blue/20 text-accent-blue border border-accent-blue/30 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md">
-                                            Lending
-                                        </div>
-                                    ) : (
-                                        <div className="px-2 py-0.5 bg-black/60 text-accent-gold border border-accent-gold/30 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md">
-                                            {listing.price?.amount} {listing.price?.type}
-                                        </div>
-                                    )}
-
-                                    {/* 2.0 Stats Badge */}
-                                    {isMaxStats(listing) && (
-                                        <div className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md">
-                                            2.0 Stats
-                                        </div>
-                                    )}
-
-                                    {/* Set Bonus Badge */}
-                                    {SET_BONUS_PETS.includes(listing.petType) && (
-                                        <div className="px-2 py-0.5 bg-orange-500/20 text-orange-300 border border-orange-500/30 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-md">
-                                            Set Bonus
-                                        </div>
-                                    )}
-                                    {/* Last Seen Badge */}
-                                    {(() => {
-                                        if (!listing.ownerLastSeen) return null;
-                                        const lastSeen = new Date(listing.ownerLastSeen);
-                                        const now = new Date();
-                                        const diffMins = (now.getTime() - lastSeen.getTime()) / (1000 * 60);
-
-                                        if (diffMins < 10) {
-                                            return (
-                                                <div className="px-2 py-0.5 bg-green-500 text-white rounded text-[10px] font-bold shadow-sm border border-green-400 uppercase tracking-wider flex items-center gap-1 backdrop-blur-md">
-                                                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                                                    Online
-                                                </div>
-                                            );
-                                        } else if (diffMins < 60) {
-                                            return (
-                                                <div className="px-2 py-0.5 bg-white/10 text-white/70 rounded text-[10px] font-bold shadow-sm border border-white/10 uppercase tracking-wider backdrop-blur-md">
-                                                    Active {Math.floor(diffMins)}m ago
-                                                </div>
-                                            );
-                                        } else if (diffMins < 1440) {
-                                            return (
-                                                <div className="px-2 py-0.5 bg-white/5 text-white/50 rounded text-[10px] font-bold shadow-sm border border-white/5 uppercase tracking-wider backdrop-blur-md">
-                                                    Active {Math.floor(diffMins / 60)}h ago
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    })()}
-                                </div>
-
-                                {/* Header */}
-                                <div className="mt-6 mb-4">
-                                    <h3 className="font-serif font-bold text-xl text-accent-gold mb-1 group-hover:text-white transition-colors tracking-wide">
-                                        {listing.petNickname || listing.petType}
-                                    </h3>
-                                    <div className="flex gap-2 text-sm text-white/70">
-                                        <span className="px-2 py-0.5 bg-white/10 rounded border border-white/10">{listing.petType}</span>
-                                        <span className="px-2 py-0.5 bg-white/10 rounded border border-white/10">{listing.petSchool}</span>
-                                    </div>
-                                </div>
-
-                                {/* Talents List */}
-                                <div className="space-y-1.5">
-                                    {listing.talents.slice(0, 5).map((talent: string, i: number) => {
-                                        const val = calculateTalentValue(talent, listing.currentStats);
-                                        return (
-                                            <div key={i} className="flex justify-between items-center text-sm px-2 py-1 rounded bg-white/5 border border-white/5">
-                                                <span className="text-white/80">{talent}</span>
-                                                {val && <span className="text-accent-gold font-mono text-xs">{val}</span>}
-                                            </div>
-                                        );
-                                    })}
-                                    {listing.talents.length > 5 && (
-                                        <div className="text-xs text-center text-white/30 italic pt-1">
-                                            +{listing.talents.length - 5} more talents
-                                        </div>
-                                    )}
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
-            </Spellbook>
-        </main>
-    );
+        <TabsContent value="all" className="space-y-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {listings.map((item) => (
+                    <Card key={item.id} className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg overflow-hidden bg-card/50">
+                        <div className="aspect-square bg-muted/20 relative flex items-center justify-center p-4">
+                            {/* Placeholder for Item Image */}
+                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                                <ShoppingBag className="w-8 h-8 text-primary/60" />
+                            </div>
+                            <Badge className="absolute top-2 right-2 bg-background/80 hover:bg-background border-border text-foreground backdrop-blur-md font-mono text-xs">
+                                {item.postedAt}
+                            </Badge>
+                        </div>
+                        <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                                <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider mb-2">
+                                    {item.category}
+                                </Badge>
+                            </div>
+                            <CardTitle className="text-lg font-serif leading-tight group-hover:text-primary transition-colors">
+                                {item.title}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+                                {item.description}
+                            </p>
+                        </CardContent>
+                        <CardFooter className="pt-4 border-t bg-muted/20 flex justify-between items-center">
+                            <div className="flex items-center gap-1.5 font-medium text-foreground">
+                                <Coins className="w-4 h-4 text-yellow-500" />
+                                <span>{item.price}</span>
+                                <span className="text-xs text-muted-foreground uppercase">{item.currency}</span>
+                            </div>
+                             <div className="text-xs text-muted-foreground">
+                                by {item.sellerName}
+                            </div>
+                        </CardFooter>
+                    </Card>
+                ))}
+            </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
 }

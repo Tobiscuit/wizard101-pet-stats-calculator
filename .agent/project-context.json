@@ -1,0 +1,27 @@
+{
+  "name": "frontend",
+  "framework": "next",
+  "frameworkVersion": "16.0.7",
+  "language": "typescript",
+  "styling": {
+    "css": "tailwindcss@4.x",
+    "components": "shadcn-ui"
+  },
+  "animations": [
+    "motion",
+    "tw-animate-css"
+  ],
+  "fonts": [
+    "Geist",
+    "Geist_Mono"
+  ],
+  "database": "firebase",
+  "deployment": "vercel",
+  "detectedAt": "2026-01-02T02:49:00Z",
+  "lastUpdated": "2026-01-02T02:49:00Z",
+  "manual": {
+    "styling": {
+      "components": "shadcn-ui + magic-ui"
+    }
+  }
+}
