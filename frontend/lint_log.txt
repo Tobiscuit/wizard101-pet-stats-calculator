@@ -1,0 +1,171 @@
+
+> frontend@0.1.0 lint
+> eslint
+
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\actions.ts
+    8:40  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   37:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   71:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   77:72  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   90:13  error  'discordId' is never reassigned. Use 'const' instead             prefer-const
+   91:13  error  'finalDiscordUsername' is never reassigned. Use 'const' instead  prefer-const
+  138:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  174:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  209:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  244:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  276:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  299:79  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  317:21  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\api\debug\route.ts
+  26:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\layout.tsx
+  34:10  warning  'ServiceWorkerRegister' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\login\page.tsx
+   6:25   warning  'Shield' is defined but never used                               @typescript-eslint/no-unused-vars
+  82:29   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  82:126  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\marketplace\[id]\opengraph-image.tsx
+  16:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\marketplace\[id]\page.tsx
+   6:21  warning  'Share2' is defined but never used           @typescript-eslint/no-unused-vars
+   7:10  warning  'PetDetailsModal' is defined but never used  @typescript-eslint/no-unused-vars
+  13:28  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\marketplace\page.tsx
+    8:10  warning  'clsx' is defined but never used              @typescript-eslint/no-unused-vars
+   10:32  warning  'applyJewelBonus' is defined but never used   @typescript-eslint/no-unused-vars
+   13:19  warning  'session' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   14:46  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   27:56  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   41:11  warning  'SCHOOLS' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   43:32  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   55:58  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+   62:21  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  113:73  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\my-pets\page.tsx
+    6:25  warning  'Store' is defined but never used         @typescript-eslint/no-unused-vars
+    6:32  warning  'Check' is defined but never used         @typescript-eslint/no-unused-vars
+   15:38  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   17:52  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   18:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   57:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:41  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:41  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\privacy\page.tsx
+  14:76   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:80   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:82   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:87   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:92   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:95   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  25:105  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  25:115  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  50:182  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\dev\wizard101-pet-stats-calculator\frontend\app\terms\page.tsx
+  14:88   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  14:100  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  41:59   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  41:65   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  41:71   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  41:84   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\dev\wizard101-pet-stats-calculator\frontend\auth.ts
+  14:39  warning  'profile' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\Calculator.tsx
+    4:10  warning  'clsx' is defined but never used                                 @typescript-eslint/no-unused-vars
+    5:35  warning  'ChevronUp' is defined but never used                            @typescript-eslint/no-unused-vars
+    5:46  warning  'ChevronDown' is defined but never used                          @typescript-eslint/no-unused-vars
+   45:12  warning  'confidence' is assigned a value but never used                  @typescript-eslint/no-unused-vars
+   76:39  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  174:81  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  174:96  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  335:42  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  338:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  338:46  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\ContactModal.tsx
+   4:28  warning  'Mail' is defined but never used          @typescript-eslint/no-unused-vars
+  11:14  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\DiscordUsernameModal.tsx
+  4:31  warning  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\ListingConfigurationModal.tsx
+   5:10  warning  'clsx' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  10:10  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  39:54  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  43:17  error    'stats' is never reassigned. Use 'const' instead                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               prefer-const
+  50:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\ListingConfigurationModal.tsx:50:13
+  48 |             }
+  49 |
+> 50 |             setPreviewStats(calculateAllPotentials(stats));
+     |             ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  51 |         }
+  52 |     }, [pet, selectedJewel]);
+  53 |                                             react-hooks/set-state-in-effect
+  56:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\ListingConfigurationModal.tsx:56:13
+  54 |     useEffect(() => {
+  55 |         if (savedDiscordUsername) {
+> 56 |             setDiscordUsername(savedDiscordUsername);
+     |             ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  57 |         }
+  58 |     }, [savedDiscordUsername]);
+  59 |  react-hooks/set-state-in-effect
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\MagicalLoader.tsx
+  5:10  warning  'clsx' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\Navbar.tsx
+    5:22  warning  'signIn' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   63:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  131:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\PetDetailsModal.tsx
+    5:10   warning  'clsx' is defined but never used                                 @typescript-eslint/no-unused-vars
+    9:10   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   11:33   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   12:37   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   13:22   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   52:113  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  131:38   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  134:33   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  134:46   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\dev\wizard101-pet-stats-calculator\frontend\components\PetScanner.tsx
+    4:18  warning  'Upload' is defined but never used                               @typescript-eslint/no-unused-vars
+    4:26  warning  'Loader2' is defined but never used                              @typescript-eslint/no-unused-vars
+    5:10  warning  'clsx' is defined but never used                                 @typescript-eslint/no-unused-vars
+  153:17  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  153:43  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+Γ£û 95 problems (69 errors, 26 warnings)
+  3 errors and 0 warnings potentially fixable with the `--fix` option.
+

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { Shield, Sword, Sparkles, ChevronUp, ChevronDown } from 'lucide-react';
+import { Shield, Sword, Sparkles, ChevronUp, ChevronDown, Save, Loader2 } from 'lucide-react';
 
 // Types
 type Stats = {
@@ -22,12 +22,16 @@ const BASE_CAPS: Stats = {
 };
 
 import { PetScanner } from './PetScanner';
-import { MagicalButton } from './MagicalButton';
-
 import { useSession, signIn } from 'next-auth/react';
-import { Save, Loader2 } from 'lucide-react';
 import { savePet } from '@/app/actions';
 import { calculateAllPotentials } from '@/lib/talent-formulas';
+
+// UI Components
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { ShinyButton } from "@/components/magicui/shiny-button"
+import { MagicCard } from "@/components/magicui/magic-card"
 
 export function Calculator() {
     const { data: session } = useSession();
@@ -150,71 +154,73 @@ export function Calculator() {
     const potentials = calculateAllPotentials(getSafeStats());
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in fade-in zoom-in duration-500">
             <PetScanner onScanComplete={handleScanComplete} />
 
             {petInfo.type && (
-                <div className="text-center mb-6 p-4 bg-white/30 rounded-lg border border-accent-gold/30 relative group">
-                    <button
+                <div className="text-center mb-6 p-4 bg-background/50 backdrop-blur-sm rounded-xl border border-accent-gold/30 relative group shadow-lg">
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setPetInfo({})}
-                        className="absolute top-2 right-2 p-1 text-foreground/40 hover:text-foreground hover:bg-white/50 rounded transition-all"
+                        className="absolute top-2 right-2 text-muted-foreground hover:text-destructive"
                         title="Clear and Rescan"
                     >
                         <span className="sr-only">Clear</span>
                         ✕
-                    </button>
+                    </Button>
 
-                    <h3 className="text-xl font-serif font-bold text-accent-gold">
-                        {petInfo.name && <span className="text-foreground mr-2">"{petInfo.name}"</span>}
+                    <h3 className="text-2xl font-serif font-bold text-accent-gold drop-shadow-sm">
+                        {petInfo.name && <span className="text-foreground mr-2">&quot;{petInfo.name}&quot;</span>}
                         {petInfo.type}
                     </h3>
                     <div className="flex justify-center gap-3 mt-2 text-sm">
-                        {petInfo.school && <span className="px-2 py-0.5 bg-black/10 rounded">{petInfo.school}</span>}
-                        {petInfo.age && <span className="px-2 py-0.5 bg-black/10 rounded">{petInfo.age}</span>}
+                        {petInfo.school && <span className="px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{petInfo.school}</span>}
+                        {petInfo.age && <span className="px-3 py-1 bg-primary/10 rounded-full border border-primary/20">{petInfo.age}</span>}
                     </div>
 
                     <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
+                        <Button
+                            variant="link"
+                            size="sm"
                             onClick={() => {
                                 setPetInfo(prev => ({ ...prev, type: undefined }));
                             }}
-                            className="text-xs text-white/40 hover:text-accent-gold transition-colors flex items-center gap-1 mx-auto"
+                            className="text-muted-foreground hover:text-accent-gold"
                         >
-                            <span className="sr-only">Edit</span>
-                            <span>Not the right pet? Try again</span>
-                        </button>
+                            Not the right pet? Try again
+                        </Button>
                     </div>
                 </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
+                <div className="space-y-6">
                     <h2 className="text-2xl font-serif text-accent-gold border-b border-accent-gold/30 pb-2">
                         Pet Stats
                     </h2>
-
-                    {(Object.keys(BASE_CAPS) as Array<keyof Stats>).map((stat) => (
-                        <div key={stat} className="flex items-center gap-4">
-                            <label className="w-24 capitalize font-serif text-lg">{stat}</label>
-                            <div className="flex-1 relative">
-                                <input
-                                    type="number"
-                                    value={currentStats[stat]}
-                                    onChange={(e) => handleStatChange(stat, e.target.value)}
-                                    onBlur={() => handleBlur(stat)}
-                                    className={clsx(
-                                        "w-full bg-[#F5E6C4] border-b-2 border-[#8B4513]/50",
-                                        "px-2 py-1 text-xl font-mono text-[#2C1A0B]",
-                                        "focus:outline-none focus:border-accent-blue focus:bg-white/50",
-                                        "transition-colors duration-200",
-                                        "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                    )}
-                                />
-                                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
-                                    / {maxStats[stat]}
+                    
+                    <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border shadow-sm space-y-4">
+                        {(Object.keys(BASE_CAPS) as Array<keyof Stats>).map((stat) => (
+                            <div key={stat} className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor={stat} className="col-span-1 capitalize font-serif text-base text-foreground/80">
+                                    {stat}
+                                </Label>
+                                <div className="col-span-3 relative">
+                                    <Input
+                                        id={stat}
+                                        type="number"
+                                        value={currentStats[stat]}
+                                        onChange={(e) => handleStatChange(stat, e.target.value)}
+                                        onBlur={() => handleBlur(stat)}
+                                        className="font-mono text-lg bg-background/50 focus-visible:ring-accent-gold"
+                                    />
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                                        / {maxStats[stat]}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
                 {/* Results Section */}
@@ -223,66 +229,80 @@ export function Calculator() {
                         Calculated Potential
                     </h2>
 
-                    {/* Damage Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-school-fire">
-                            <Sword className="w-6 h-6" />
-                            <h3 className="text-xl font-bold">Damage</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Dealer:</span>
-                                <span className="font-bold text-xl">{potentials.damage.dealer}%</span>
+                    <div className="grid gap-4">
+                        {/* Damage Card */}
+                        <MagicCard 
+                            className="p-6 border-accent-gold/20"
+                            gradientColor="var(--school-fire)"
+                            gradientOpacity={0.15}
+                        >
+                            <div className="flex items-center gap-2 mb-4 text-school-fire">
+                                <Sword className="w-6 h-6" />
+                                <h3 className="text-xl font-bold">Damage</h3>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Giver:</span>
-                                <span className="font-bold text-xl">{potentials.damage.giver}%</span>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Dealer</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.damage.dealer}%</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Giver</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.damage.giver}%</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Boon</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.damage.boon}%</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Boon:</span>
-                                <span className="font-bold text-xl">{potentials.damage.boon}%</span>
-                            </div>
-                        </div>
-                    </div>
+                        </MagicCard>
 
-                    {/* Resist Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-school-ice">
-                            <Shield className="w-6 h-6" />
-                            <h3 className="text-xl font-bold">Resistance</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Spell-Proof:</span>
-                                <span className="font-bold text-xl">{potentials.resist.proof}%</span>
+                        {/* Resist Card */}
+                        <MagicCard 
+                            className="p-6 border-accent-gold/20"
+                            gradientColor="var(--school-ice)"
+                            gradientOpacity={0.15}
+                        >
+                            <div className="flex items-center gap-2 mb-4 text-school-ice">
+                                <Shield className="w-6 h-6" />
+                                <h3 className="text-xl font-bold">Resistance</h3>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Spell-Defying:</span>
-                                <span className="font-bold text-xl">{potentials.resist.defy}%</span>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Spell-Proof</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.resist.proof}%</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Spell-Defying</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.resist.defy}%</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">School Ward</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.resist.ward}%</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between">
-                                <span>School Ward:</span>
-                                <span className="font-bold text-xl">{potentials.resist.ward}%</span>
-                            </div>
-                        </div>
-                    </div>
+                        </MagicCard>
 
-                    {/* Pierce Card */}
-                    <div className="bg-black/10 p-4 rounded-lg border border-accent-gold/20">
-                        <div className="flex items-center gap-2 mb-3 text-yellow-500">
-                            <Sword className="w-6 h-6 rotate-45" />
-                            <h3 className="text-xl font-bold">Pierce</h3>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Armor Breaker:</span>
-                                <span className="font-bold text-xl">{potentials.pierce.breaker}%</span>
+                        {/* Pierce Card */}
+                        <MagicCard 
+                            className="p-6 border-accent-gold/20"
+                            gradientColor="#EAB308" // Yellow-500
+                            gradientOpacity={0.15}
+                        >
+                            <div className="flex items-center gap-2 mb-4 text-yellow-500">
+                                <Sword className="w-6 h-6 rotate-45" />
+                                <h3 className="text-xl font-bold">Pierce</h3>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Armor Piercer:</span>
-                                <span className="font-bold text-xl">{potentials.pierce.piercer}%</span>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Armor Breaker</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.pierce.breaker}%</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-background/40 p-2 rounded">
+                                    <span className="text-sm font-medium">Armor Piercer</span>
+                                    <span className="font-bold text-lg font-mono">{potentials.pierce.piercer}%</span>
+                                </div>
                             </div>
-                        </div>
+                        </MagicCard>
                     </div>
                 </div >
             </div >
@@ -296,7 +316,7 @@ export function Calculator() {
                                 <h3 className="text-lg font-serif font-bold text-accent-gold mb-2">Manifested Talents</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {talents.map((talent, i) => (
-                                        <span key={i} className="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-sm">
+                                        <span key={i} className="px-4 py-1.5 bg-background shadow-sm border border-accent-gold/20 rounded-full text-sm font-medium capitalize animate-in zoom-in duration-300" style={{ animationDelay: `${i * 50}ms` }}>
                                             {talent}
                                         </span>
                                     ))}
@@ -305,33 +325,36 @@ export function Calculator() {
                         )}
 
                         {advice && (
-                            <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
-                                <h3 className="text-lg font-serif font-bold text-blue-300 mb-1 flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4" />
-                                    Gamma's Wisdom
+                            <MagicCard 
+                                className="p-6 bg-blue-950/10 border-blue-500/20"
+                                gradientColor="var(--accent-blue)"
+                                gradientOpacity={0.1}
+                            >
+                                <h3 className="text-lg font-serif font-bold text-accent-blue mb-2 flex items-center gap-2">
+                                    <Sparkles className="w-5 h-5" />
+                                    Gamma&apos;s Wisdom
                                 </h3>
-                                <p className="text-sm text-blue-100/90 italic">
-                                    "{advice}"
+                                <p className="text-base text-foreground/80 leading-relaxed italic">
+                                    &quot;{advice}&quot;
                                 </p>
-                            </div>
+                            </MagicCard>
                         )}
                     </div>
                 )
             }
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-4 items-center pt-8">
-
-
-                <MagicalButton
+            <div className="flex flex-col gap-4 items-center pt-8 pb-12">
+                <ShinyButton
                     onClick={handleSavePet}
                     disabled={isSaving}
-                    size="lg"
-                    className="min-w-[200px]"
+                    className="min-w-[220px] shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-lg font-serif font-bold tracking-widest"
                 >
-                    {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    {session ? "Save to My Pets" : "Login to Save"}
-                </MagicalButton>
+                    <div className="flex items-center gap-2">
+                        {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {session ? "Save to My Pets" : "Login to Save"}
+                    </div>
+                </ShinyButton>
             </div>
         </div >
     );

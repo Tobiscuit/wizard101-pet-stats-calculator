@@ -149,8 +149,8 @@ export function PetScanner({ onScanComplete }: PetScannerProps) {
                 </div>
             )}
 
-            <p className="text-lg text-accent-gold/80 font-serif italic flex items-center gap-2">
-                "Oh, what do we have here?" <span className="text-2xl not-italic">🧙‍♂️</span>
+            <p className="mt-2 text-sm text-muted-foreground">
+                Drag and drop your screenshot here, or <span className="text-primary font-medium">&quot;click to upload&quot;</span>
             </p>
         </div>
     );

@@ -131,7 +131,7 @@ export function PetDetailsModal({ pet, onClose, onListInMarketplace, onUnlistFro
                                 Gamma's Wisdom
                             </h3>
                             <p className="text-sm text-blue-100/90 italic">
-                                "{pet.advice}"
+                                &quot;{pet.advice}&quot;
                             </p>
                         </div>
                     )}
