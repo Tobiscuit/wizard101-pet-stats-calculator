@@ -12,7 +12,7 @@ export function ThemeColorManager() {
     // Theme Color Map
     const themeColors: Record<string, string> = {
       light: "#fdf8e6",      // Solarized Cream (Canonical)
-      candlelight: "#fcf5e5", // Warm Candlelight
+      candlelight: "#f7e6ce", // Intense Candlelight (Sidebar Match)
       dark: "#11222a",       // Deep Void
       abyss: "#002b36",      // Solarized Abyss (Navy/Teal)
     }

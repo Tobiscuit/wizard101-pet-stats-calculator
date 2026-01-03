@@ -39,35 +39,35 @@
     --sidebar-ring: 196 100% 14%;
   }
 
-  /* Theme: Candlelight (Warm/Orange Night Light) */
+  /* Theme: Candlelight (Intense Warmth / Night Light) */
   .candlelight {
-    --background: 38 60% 95%; /* Warm Cream */
+    --background: 38 95% 93%; /* #fef6db - Very intense warm cream */
     --foreground: 200 20% 30%;
-    --card: 38 60% 95%;
+    --card: 38 95% 93%;
     --card-foreground: 200 20% 30%;
-    --popover: 38 60% 95%;
+    --popover: 38 95% 93%;
     --popover-foreground: 200 20% 30%;
     --primary: 196 100% 14%;
-    --primary-foreground: 38 60% 95%;
-    --secondary: 35 45% 93%;
+    --primary-foreground: 38 95% 93%;
+    --secondary: 35 60% 90%; /* Visibly warmer sidebar/secondary */
     --secondary-foreground: 196 100% 14%;
-    --muted: 35 45% 93%;
+    --muted: 35 60% 90%;
     --muted-foreground: 200 10% 40%;
-    --accent: 35 45% 93%;
+    --accent: 35 60% 90%;
     --accent-foreground: 196 100% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 35 30% 85%;
-    --input: 35 30% 85%;
+    --border: 35 40% 82%; /* Stronger borders */
+    --input: 35 40% 82%;
     --ring: 196 100% 14%;
-    --sidebar: 35 45% 93%;
-    --sidebar-background: 35 45% 93%;
+    --sidebar: 35 60% 90%; /* #f7e6ce - Rich aged paper */
+    --sidebar-background: 35 60% 90%;
     --sidebar-foreground: 200 20% 30%;
     --sidebar-primary: 200 100% 20%;
-    --sidebar-primary-foreground: 38 60% 95%;
-    --sidebar-accent: 35 50% 88%;
+    --sidebar-primary-foreground: 38 95% 93%;
+    --sidebar-accent: 35 65% 85%;
     --sidebar-accent-foreground: 196 100% 14%;
-    --sidebar-border: 35 30% 85%;
+    --sidebar-border: 35 40% 82%;
     --sidebar-ring: 196 100% 14%;
   }
 
