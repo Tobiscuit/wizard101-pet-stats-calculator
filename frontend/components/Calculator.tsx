@@ -37,7 +37,13 @@ export function Calculator() {
     const { data: session } = useSession();
     const [isSaving, setIsSaving] = useState(false);
     // State
-    const [currentStats, setCurrentStats] = useState<Record<keyof Stats, number | string>>({ ...BASE_CAPS });
+    const [currentStats, setCurrentStats] = useState<Record<keyof Stats, number | string>>({
+        strength: '',
+        intellect: '',
+        agility: '',
+        will: '',
+        power: ''
+    });
     const [maxStats, setMaxStats] = useState<Stats>({ ...BASE_CAPS });
     const [talents, setTalents] = useState<string[]>([]);
     const [advice, setAdvice] = useState<string>("");
