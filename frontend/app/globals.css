@@ -2,56 +2,60 @@
 
 @layer base {
   :root {
-    /* "Cozy Spellbook" - Solarized Light Base + Candlelight Warmth */
+    /* "Night Shade" Solarized - Baked-in Candlelight Warmth */
+    /* Mimicking the effect of a Blue Light Filter natively */
     
-    /* Main Page: Fresh Parchment (Solarized Base3ish) */
-    --background: 45 50% 96%; /* #fdf8e8 - Clean, bright cream */
-    --foreground: 200 20% 35%; /* #586e75 - Soft ink */
+    /* Main Page: Deep Warm Parchment (Not pale cream) */
+    /* Hue 40 (Amber), Sat 70% (Intense), Light 94% (Readable but warm) */
+    --background: 40 70% 94%; /* #fef8e0 - Richer, golden warmth */
+    --foreground: 200 20% 30%; /* #4f636a - Solarized Ink */
 
-    --card: 45 50% 96%;
-    --card-foreground: 200 20% 35%;
+    --card: 40 70% 94%;
+    --card-foreground: 200 20% 30%;
 
-    --popover: 45 50% 96%;
-    --popover-foreground: 200 20% 35%;
+    --popover: 40 70% 94%;
+    --popover-foreground: 200 20% 30%;
 
     --primary: 196 100% 14%; 
-    --primary-foreground: 45 50% 96%;
+    --primary-foreground: 40 70% 94%;
 
-    --secondary: 35 30% 90%; /* Warm Sand/Binding for highlights */
+    /* Sidebar: The "Old Spellbook" Binding */
+    /* Hue 35 (Orange/Gold), Sat 50% (Rich), Light 88% (Distinct) */
+    /* This creates that "cozy corner" feeling */
+    --secondary: 35 50% 88%; 
     --secondary-foreground: 196 100% 14%;
 
-    --muted: 35 30% 90%;
-    --muted-foreground: 200 10% 45%;
+    --muted: 35 50% 88%;
+    --muted-foreground: 200 10% 40%;
 
-    --accent: 35 40% 90%;
+    --accent: 35 50% 88%;
     --accent-foreground: 196 100% 14%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 35 20% 85%; /* Warmer borders */
-    --input: 35 20% 85%;
+    --border: 35 30% 80%;
+    --input: 35 30% 80%;
     --ring: 196 100% 14%;
 
     --radius: 0.5rem;
     
-    /* Solarized Accents */
-    --chart-1: 34 100% 80%; /* Yellow */
-    --chart-2: 17 80% 64%; /* Orange */
+    /* Solarized Accents - Kept Vivid */
+    --chart-1: 34 100% 75%; /* Darker Yellow */
+    --chart-2: 17 80% 60%; /* Orange */
     --chart-3: 1 70% 50%; /* Red */
     --chart-4: 330 70% 50%; /* Magenta */
     --chart-5: 250 50% 55%; /* Violet */
 
-    /* Sidebar: "Candlelight" / Inner Binding */
-    /* Shifted towards Orange (35deg) for comfort/warmth vs Yellow-Green of Solarized */
-    --sidebar: 36 45% 93%; /* Warm, cozy, slightly peach-tinted beige */
-    --sidebar-background: 36 45% 93%;
-    --sidebar-foreground: 200 20% 35%;
-    --sidebar-primary: 200 100% 20%; /* Deep ink blue */
-    --sidebar-primary-foreground: 45 50% 96%;
-    --sidebar-accent: 36 50% 88%; /* Darker warm interaction */
+    /* Sidebar Variables */
+    --sidebar: 35 50% 88%; /* #f2e6d6 - Warm, aged paper */
+    --sidebar-background: 35 50% 88%;
+    --sidebar-foreground: 200 20% 30%;
+    --sidebar-primary: 200 100% 20%;
+    --sidebar-primary-foreground: 40 70% 94%;
+    --sidebar-accent: 35 55% 84%; /* Even richer on interaction */
     --sidebar-accent-foreground: 196 100% 14%;
-    --sidebar-border: 36 30% 85%;
+    --sidebar-border: 35 30% 80%;
     --sidebar-ring: 196 100% 14%;
   }
 
