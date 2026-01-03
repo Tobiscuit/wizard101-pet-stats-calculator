@@ -264,3 +264,11 @@
     overflow-x: hidden;
   }
 }
+
+@layer utilities {
+  .container {
+    margin-inline: auto;
+    padding-inline: 1rem;
+    max-width: 1400px;
+  }
+}
