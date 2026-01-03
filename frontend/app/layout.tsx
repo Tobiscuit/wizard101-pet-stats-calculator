@@ -60,7 +60,7 @@ export default function RootLayout({
         <SessionProvider>
             <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="candlelight"
             themes={["light", "dark", "candlelight", "abyss"]}
             enableSystem
             disableTransitionOnChange

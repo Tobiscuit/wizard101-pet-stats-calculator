@@ -23,7 +23,8 @@ import {
   User,
   Moon,
   Sun,
-  Monitor
+  Monitor,
+  Check
 } from "lucide-react"
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
@@ -153,7 +154,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
-  const { setTheme } = useTheme()
+  const { setTheme, theme } = useTheme()
   const pathname = usePathname()
 
   return (
@@ -247,27 +248,42 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="text-xs text-muted-foreground px-2 pb-2">
                   Select Theme
                 </DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  <Sun className="mr-2 h-4 w-4 text-orange-400" />
-                  Solarized Light
+                <DropdownMenuItem onClick={() => setTheme("light")} className="justify-between">
+                  <div className="flex items-center">
+                    <Sun className="mr-2 h-4 w-4 text-orange-400" />
+                     Solarized Light
+                  </div>
+                  {theme === "light" && <Check className="h-4 w-4" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("candlelight")}>
-                  <Sparkles className="mr-2 h-4 w-4 text-amber-500" />
-                  Candlelight (Warm)
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  <Moon className="mr-2 h-4 w-4 text-slate-400" />
-                  Deep Void
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("abyss")}>
-                  <Bot className="mr-2 h-4 w-4 text-teal-400" />
-                  Abyss (Navy)
+                <DropdownMenuItem onClick={() => setTheme("candlelight")} className="justify-between">
+                  <div className="flex items-center">
+                    <Sparkles className="mr-2 h-4 w-4 text-amber-500" />
+                    Candlelight (Warm)
+                  </div>
+                  {theme === "candlelight" && <Check className="h-4 w-4" />}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  <Monitor className="mr-2 h-4 w-4" />
-                  System Default
+                <DropdownMenuItem onClick={() => setTheme("dark")} className="justify-between">
+                  <div className="flex items-center">
+                    <Moon className="mr-2 h-4 w-4 text-slate-400" />
+                    Deep Void
+                  </div>
+                  {theme === "dark" && <Check className="h-4 w-4" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("abyss")} className="justify-between">
+                  <div className="flex items-center">
+                    <Bot className="mr-2 h-4 w-4 text-teal-400" />
+                    Abyss (Navy)
+                  </div>
+                  {theme === "abyss" && <Check className="h-4 w-4" />}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setTheme("system")} className="justify-between">
+                  <div className="flex items-center">
+                    <Monitor className="mr-2 h-4 w-4" />
+                    System Default
+                  </div>
+                  {theme === "system" && <Check className="h-4 w-4" />}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
