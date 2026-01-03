@@ -235,7 +235,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className={state === "collapsed" ? "fixed bottom-4 left-4 z-50 rounded-2xl border border-white/20 bg-sidebar/60 backdrop-blur-xl shadow-xl transition-all duration-500 ease-out hover:scale-105" : "transition-all duration-300"}>
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
