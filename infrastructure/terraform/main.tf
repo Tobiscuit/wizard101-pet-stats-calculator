@@ -23,6 +23,16 @@ variable "cloudflare_zone_id" {
   sensitive = true
 }
 
+// -----------------------------------------------------------
+// HIBERNATE SWITCH 💤
+// -----------------------------------------------------------
+variable "hibernate" {
+  description = "Set to true to DESTROY server and save money. Set to false to PROVISION server."
+  type        = bool
+  default     = false 
+}
+// -----------------------------------------------------------
+
 provider "hcloud" {
   token = var.hcloud_token
 }
@@ -31,57 +41,68 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-// 1. SSH Key (Unchanged)
+// 1. SSH Key (Always exists)
 resource "hcloud_ssh_key" "jrcodex_admin" {
   name       = "jrcodex-rhel-key"
   public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYkbi84R3/FYCx4PClpX/NJUavpVdiOzU/bnUZLcRFB"
 }
 
-// 2. Hetzner Server (Unchanged)
+// 2. Hetzner Server (Dynamic Existence)
 resource "hcloud_server" "nexus_production" {
+  count       = var.hibernate ? 0 : 1 // 0 = Destroyed, 1 = Created
+  
   name        = "nexus-core-01"
   image       = "ubuntu-24.04"
   server_type = "ccx23"
   location    = "ash"
   ssh_keys    = [hcloud_ssh_key.jrcodex_admin.id]
-  user_data = file("${path.module}/user-data.yml")
+  user_data   = file("${path.module}/user-data.yml")
 }
 
-output "server_ip" {
-  value = hcloud_server.nexus_production.ipv4_address
+// Create a local variable to safely handle the "missing" IP when hibernating
+locals {
+  // If hibernate is false, we have 1 server -> use its IP.
+  // If hibernate is true, we have 0 servers -> use a dummy IP (ignored by DNS logic below) or Vercel CNAME
+  active_ip = var.hibernate ? "76.76.21.21" : hcloud_server.nexus_production[0].ipv4_address
 }
 
-// 3. DNS (Cloudflare)
+// 3. DNS (Dynamic Routing)
 // Hostname: commons.jrcodex.dev
 resource "cloudflare_record" "commons" {
   zone_id = var.cloudflare_zone_id
   name    = "commons"
-  value   = hcloud_server.nexus_production.ipv4_address
-  type    = "A"
-  proxied = true // Enable Cloudflare Proxy features (SSL/CDN)
+  
+  // Logic: 
+  // If Hibernate: CNAME -> cname.vercel-dns.com (Vercel)
+  // If Active:    A     -> Server IP
+  value   = var.hibernate ? "cname.vercel-dns.com" : local.active_ip
+  type    = var.hibernate ? "CNAME" : "A"
+  proxied = true
 }
 
 // Hostname: api.commons.jrcodex.dev
 resource "cloudflare_record" "api_commons" {
   zone_id = var.cloudflare_zone_id
   name    = "api.commons"
-  value   = hcloud_server.nexus_production.ipv4_address
-  type    = "A"
+  value   = var.hibernate ? "cname.vercel-dns.com" : local.active_ip
+  type    = var.hibernate ? "CNAME" : "A"
   proxied = true
 }
 
-// Hostname: panel.jrcodex.dev (Coolify Dashboard)
+// Hostname: panel.jrcodex.dev
+// (Note: The Panel will be DEAD if hibernating, so pointing it to Vercel is fine or just leave it)
 resource "cloudflare_record" "panel" {
   zone_id = var.cloudflare_zone_id
   name    = "panel"
-  value   = hcloud_server.nexus_production.ipv4_address
-  type    = "A"
+  value   = var.hibernate ? "cname.vercel-dns.com" : local.active_ip
+  type    = var.hibernate ? "CNAME" : "A"
   proxied = true
 }
 
-// 4. Firewall (Unchanged + UDP 443)
+// 4. Firewall (Only exists if Server exists)
 resource "hcloud_firewall" "nexus_security" {
-  name = "nexus-firewall"
+  count = var.hibernate ? 0 : 1
+  name  = "nexus-firewall"
   
   rule {
     direction = "in"
@@ -122,6 +143,11 @@ resource "hcloud_firewall" "nexus_security" {
 }
 
 resource "hcloud_firewall_attachment" "nexus_security_attachment" {
-  firewall_id = hcloud_firewall.nexus_security.id
-  server_ids  = [hcloud_server.nexus_production.id]
+  count       = var.hibernate ? 0 : 1
+  firewall_id = hcloud_firewall.nexus_security[0].id
+  server_ids  = [hcloud_server.nexus_production[0].id]
+}
+
+output "server_status" {
+  value = var.hibernate ? "HIBERNATING (Server Destroyed, DNS -> Vercel)" : "ACTIVE (Server Running, IP: ${hcloud_server.nexus_production[0].ipv4_address})"
 }

@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, Bot, User, Sparkles } from "lucide-react"
+import { chatWithGamma } from "@/app/actions" // Assuming this import exists for chatWithGamma
+import { ChatMessage } from "@/lib/types" // Assuming this import exists for ChatMessage
 
 type Message = {
   id: string
@@ -19,25 +21,49 @@ export function ScribeWidget() {
     {
       id: "1",
       role: "assistant",
-      content: "Greetings! I am Gamma, the Scribe. I can verify outdated wiki info using my bleeding-edge connection to the Spiral. How can I help?",
+      content: "Greetings! I am Gamma, utilizing the latest Gemini 3.0 connection to the Spiral's archives. Ask me anything about stats, drops, or cheats!",
     },
   ])
   const [input, setInput] = useState("")
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  const handleSend = () => {
-    if (!input.trim()) return
-    const newMsg: Message = { id: Date.now().toString(), role: "user", content: input }
-    setMessages((prev) => [...prev, newMsg])
-    setInput("")
+  useEffect(() => {
+    // Auto-scroll to bottom
+    if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages, isLoading])
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return
     
-    // Mock response for now
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { id: (Date.now() + 1).toString(), role: "assistant", content: "I am listening. (Logic to be wired to Gemini API)." },
-      ])
-    }, 1000)
+    const userMsg: Message = { id: Date.now().toString(), role: "user", content: input }
+    setMessages((prev) => [...prev, userMsg])
+    setInput("")
+    setIsLoading(true)
+
+    try {
+        // Call Server Action
+        // We pass the history (excluding IDs)
+        const history: ChatMessage[] = [...messages, userMsg].map(m => ({ role: m.role, content: m.content }));
+        
+        const responseCtx = await chatWithGamma(history);
+        
+        const botMsg: Message = { 
+            id: (Date.now() + 1).toString(), 
+            role: "assistant", 
+            content: responseCtx.content 
+        }
+        
+        setMessages((prev) => [...prev, botMsg])
+    } catch (err) {
+        console.error("Scribe Error:", err)
+    } finally {
+        setIsLoading(false)
+    }
   }
 
   return (
@@ -60,8 +86,13 @@ export function ScribeWidget() {
                     <AvatarFallback><Bot className="h-5 w-5 text-accent-gold" /></AvatarFallback>
                 </Avatar>
                 <div className="text-left">
-                    <SheetTitle className="text-accent-gold">The Scribe</SheetTitle>
-                    <SheetDescription className="text-xs">Powered by Gamma (Gemini 3.0)</SheetDescription>
+                    <SheetTitle className="text-accent-gold flex items-center gap-2">
+                        The Scribe
+                        <span className="text-[10px] bg-accent-gold/10 text-accent-gold px-2 py-0.5 rounded-full border border-accent-gold/20">3.0 Preview</span>
+                    </SheetTitle>
+                    <SheetDescription className="text-xs">
+                        Powered by Gamma (Gemini 3.0 Flash)
+                    </SheetDescription>
                 </div>
             </div>
         </SheetHeader>
@@ -91,6 +122,17 @@ export function ScribeWidget() {
                 </div>
               </div>
             ))}
+            {isLoading && (
+                 <div className="flex gap-3 flex-row">
+                    <Avatar className="h-8 w-8 mt-1 border border-border">
+                        <AvatarFallback className="bg-primary/10"><Bot className="h-4 w-4 text-primary" /></AvatarFallback>
+                    </Avatar>
+                    <div className="rounded-2xl px-4 py-2 bg-muted text-muted-foreground rounded-tl-none border border-border/50">
+                        <span className="animate-pulse">Consulting the archives...</span>
+                    </div>
+                </div>
+            )}
+            <div ref={scrollRef} />
           </div>
         </ScrollArea>
 
@@ -101,11 +143,13 @@ export function ScribeWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                disabled={isLoading}
                 className="pr-12 bg-muted/50 border-accent-gold/20 focus-visible:ring-accent-gold/50"
              />
              <Button 
                 onClick={handleSend} 
                 size="icon" 
+                disabled={isLoading}
                 className="absolute right-1 top-1 h-8 w-8 bg-accent-gold text-white hover:bg-accent-gold/90"
              >
                 <Send className="h-4 w-4" />
