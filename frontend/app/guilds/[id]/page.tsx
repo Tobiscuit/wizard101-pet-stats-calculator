@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getGuildById } from "@/services/guild-service"
-import { Shield, Users, Trophy, MapPin, Swords, Scroll } from "lucide-react"
+import { Shield, Users, Trophy, MapPin, Swords, Scroll, Sparkles } from "lucide-react"
 import { notFound } from "next/navigation"
 
 interface PageProps {
@@ -12,6 +12,12 @@ interface PageProps {
   }
 }
 
+const FACTIONS = {
+    ravenwood: { label: "Ravenwood", icon: <Scroll className="w-5 h-5" />, color: "text-green-500", bg: "bg-green-500/10" },
+    pigswick: { label: "Pigswick", icon: <Swords className="w-5 h-5" />, color: "text-orange-500", bg: "bg-orange-500/10" },
+    arcanum: { label: "Arcanum", icon: <Sparkles className="w-5 h-5" />, color: "text-purple-500", bg: "bg-purple-500/10" },
+};
+
 export default async function GuildDetailPage({ params }: PageProps) {
   const guild = await getGuildById(params.id)
 
@@ -19,23 +25,33 @@ export default async function GuildDetailPage({ params }: PageProps) {
     notFound()
   }
 
+  const faction = FACTIONS[guild.faction];
+
   return (
     <div className="container py-8 max-w-5xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Banner */}
-      <div className="relative rounded-xl overflow-hidden bg-muted h-48 md:h-64 flex items-end p-6 border border-border">
-         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
-         <div className="relative z-20 flex flex-col md:flex-row gap-4 items-start md:items-end justify-between w-full">
-            <div>
-                <div className="flex gap-2 mb-2">
-                    <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-primary/20 backdrop-blur-md">
-                        Level {guild.level} Guild
+      <div className="relative rounded-xl overflow-hidden bg-muted h-64 flex items-end p-8 border border-border group">
+         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
+         
+         {/* Faction Background Effect */}
+         <div className={`absolute top-0 right-0 w-64 h-64 ${faction.color} opacity-10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2`} />
+
+         <div className="relative z-20 flex flex-col md:flex-row gap-6 items-start md:items-end justify-between w-full">
+            <div className="space-y-4">
+                <div className="flex gap-2">
+                    <Badge variant="outline" className={`${faction.color} ${faction.bg} border-current/20 backdrop-blur-md px-3 py-1 flex items-center gap-2`}>
+                        {faction.icon}
+                        {faction.label}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-background/50 backdrop-blur-md">
+                        Lvl {guild.level}
                     </Badge>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground drop-shadow-md">
+                <h1 className="text-4xl md:text-6xl font-serif font-bold text-foreground drop-shadow-sm tracking-tight">
                     {guild.name}
                 </h1>
             </div>
-            <Button size="lg" className="shadow-lg shadow-primary/20 font-semibold">
+            <Button size="lg" className="shadow-lg shadow-primary/20 font-semibold min-w-[160px] bg-accent-gold text-primary-foreground hover:bg-accent-gold/90">
                 Request to Join
             </Button>
          </div>
@@ -51,11 +67,11 @@ export default async function GuildDetailPage({ params }: PageProps) {
                         About Us
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="text-muted-foreground leading-relaxed">
+                <CardContent className="text-muted-foreground leading-relaxed text-lg">
                     {guild.description}
-                    <div className="mt-6 flex flex-wrap gap-2">
-                        {guild.tags.map(tag => (
-                            <Badge key={tag} variant="secondary" className="px-3 py-1">#{tag}</Badge>
+                    <div className="mt-8 flex flex-wrap gap-2">
+                        {guild.tags?.map(tag => (
+                            <Badge key={tag} variant="secondary" className="px-3 py-1 text-sm">#{tag}</Badge>
                         ))}
                     </div>
                 </CardContent>
@@ -64,33 +80,15 @@ export default async function GuildDetailPage({ params }: PageProps) {
             <Card>
                 <CardHeader>
                     <CardTitle className="font-serif text-2xl flex items-center gap-2">
-                         <Swords className="w-5 h-5 text-muted-foreground" />
-                        Active Roster
+                         <Users className="w-5 h-5 text-muted-foreground" />
+                        Roster
                     </CardTitle>
-                    <CardDescription>Only displaying officers and leaders.</CardDescription>
+                    <CardDescription>
+                        {guild.memberCount} active members.
+                    </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-4">
-                    {guild.members.length > 0 ? guild.members.map(member => (
-                        <div key={member.userId} className="flex items-center justify-between p-3 rounded-lg border bg-muted/20">
-                            <div className="flex items-center gap-3">
-                                <Avatar>
-                                    <AvatarImage src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${member.wizardName}`} />
-                                    <AvatarFallback>{member.wizardName[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="font-medium">{member.wizardName}</div>
-                                    <div className="text-xs text-muted-foreground">{member.school} • {member.joinedAt}</div>
-                                </div>
-                            </div>
-                            <Badge variant={member.role === 'Leader' ? "default" : "outline"}>
-                                {member.role}
-                            </Badge>
-                        </div>
-                    )) : (
-                        <div className="text-center py-8 text-muted-foreground italic">
-                            Roster is hidden or empty.
-                        </div>
-                    )}
+                <CardContent className="text-center py-10 text-muted-foreground">
+                    <p>Roster viewing is currently restricted to members.</p>
                 </CardContent>
             </Card>
         </div>
@@ -107,32 +105,18 @@ export default async function GuildDetailPage({ params }: PageProps) {
                 <CardContent className="grid gap-4 text-sm">
                     <div className="flex justify-between py-2 border-b border-border/50">
                         <span className="text-muted-foreground">Faction</span>
-                        <span className="font-medium">{guild.faction}</span>
+                        <span className={`font-medium ${faction.color}`}>{guild.faction}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-border/50">
-                         <span className="text-muted-foreground">Members</span>
-                         <span className="font-medium">{guild.memberCount} / 100</span>
+                        <span className="text-muted-foreground">Leader</span>
+                        <span className="font-medium truncate max-w-[120px]">{guild.leaderId}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-border/50">
                         <span className="text-muted-foreground">Established</span>
-                        <span className="font-medium">2023</span>
-                    </div>
-                    <div className="flex justify-between py-2">
-                        <span className="text-muted-foreground">Activity</span>
-                        <span className="text-green-500 font-medium flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            High
+                        <span className="font-medium">
+                            {guild.createdAt?.seconds ? new Date(guild.createdAt.seconds * 1000).getFullYear() : 'Unknown'}
                         </span>
                     </div>
-                </CardContent>
-            </Card>
-
-             <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Office Hours</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                    Mostly active during EST evenings and weekend raids.
                 </CardContent>
             </Card>
         </div>

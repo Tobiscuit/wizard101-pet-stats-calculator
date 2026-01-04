@@ -1,88 +1,190 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getMarketplaceListings } from "@/services/marketplace-mock"
-import { Search, ShoppingBag, Coins, Filter, Tag } from "lucide-react"
-import Link from "next/link"
+"use client";
 
-export default async function MarketplacePage() {
-  const listings = await getMarketplaceListings()
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { getListings, createListing, createOrder } from "@/services/marketplace-service";
+import { MarketplaceListing } from "@/types/firestore";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Coins, Package, Info, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-  return (
-    <div className="container py-8 space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 className="text-4xl font-serif font-bold tracking-tight">Bazaar 2.0</h1>
-            <p className="text-muted-foreground mt-2">Trade pets, treasure cards, and services safely.</p>
-        </div>
-        <div className="flex w-full md:w-auto gap-2">
-            <Button size="lg" className="shadow-lg shadow-primary/20">
-                <Tag className="w-4 h-4 mr-2" />
-                Sell Item
-            </Button>
-        </div>
-      </div>
+export default function MarketplacePage() {
+    const { data: session } = useSession();
+    const router = useRouter();
+    
+    const [listings, setListings] = useState<MarketplaceListing[]>([]);
+    const [loading, setLoading] = useState(true);
+    
+    // Create State
+    const [isOpen, setIsOpen] = useState(false);
+    const [newItem, setNewItem] = useState<Partial<MarketplaceListing>>({ type: 'tc_pack', currency: 'empowers' });
+    const [creating, setCreating] = useState(false);
 
-      <Tabs defaultValue="all" className="w-full">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-             <TabsList className="bg-muted/50 border border-border w-full flex-wrap h-auto p-1">
-                <TabsTrigger value="all" className="flex-1">All Items</TabsTrigger>
-                <TabsTrigger value="pets" className="flex-1">Pets</TabsTrigger>
-                <TabsTrigger value="tc" className="flex-1">TCs</TabsTrigger>
-                <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
-            </TabsList>
-            
-            <div className="relative w-full md:w-72">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search listings..." className="pl-9 bg-background" />
-            </div>
-        </div>
+    useEffect(() => {
+        loadListings();
+    }, []);
 
-        <TabsContent value="all" className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {listings.map((item) => (
-                    <Card key={item.id} className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg overflow-hidden bg-card/50">
-                        <div className="aspect-square bg-muted/20 relative flex items-center justify-center p-4">
-                            {/* Placeholder for Item Image */}
-                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                <ShoppingBag className="w-8 h-8 text-primary/60" />
+    async function loadListings() {
+        setLoading(true);
+        try {
+            const data = await getListings();
+            setListings(data);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleCreate() {
+        if (!session?.user?.id) return;
+        setCreating(true);
+        try {
+            await createListing(session.user.id, session.user.name || 'Unknown', newItem);
+            setIsOpen(false);
+            loadListings();
+        } catch (e) {
+            console.error(e);
+            alert("Error creating listing");
+        } finally {
+            setCreating(false);
+        }
+    }
+
+    async function handleBuy(listing: MarketplaceListing) {
+        if (!session?.user?.id) return alert("Login to buy");
+        if (confirm(`Send a Ping to buy ${listing.title} for ${listing.pricePerBatch || listing.pricePerUnit} Empowers?`)) {
+            try {
+                // Assuming buying 1 batch for simplicity
+                await createOrder(listing, session.user.id, 1);
+                alert("Ping sent! Check your Order Dashboard.");
+                router.refresh();
+            } catch (e) {
+                console.error(e); // alert("Failed");
+            }
+        } 
+    }
+
+    return (
+        <div className="container py-10 animate-in fade-in duration-500">
+             <div className="flex justify-between items-center mb-10">
+                <div>
+                     <h1 className="text-4xl font-serif font-bold flex items-center gap-3">
+                        <Coins className="w-10 h-10 text-yellow-500" />
+                        The Bazaar 2.0
+                     </h1>
+                     <p className="text-muted-foreground">Peer-to-peer trading. Powered by Empowers.</p>
+                </div>
+
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                    <DialogTrigger asChild>
+                         <Button className="bg-accent-gold text-primary-foreground hover:bg-accent-gold/90">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Sell Item
+                         </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>List an Item</DialogTitle>
+                            <DialogDescription>What are you selling today?</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Type</Label>
+                                    <Select 
+                                        value={newItem.type} 
+                                        onValueChange={(v: any) => setNewItem({...newItem, type: v})}
+                                    >
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="tc_pack">TC Pack (Simple)</SelectItem>
+                                            <SelectItem value="pet_lend">Pet Lend</SelectItem>
+                                            <SelectItem value="carry_service">Carry Service</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Currency</Label>
+                                    <Select disabled value="empowers">
+                                        <SelectTrigger><SelectValue placeholder="Empowers" /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="empowers">Empowers</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
-                            <Badge className="absolute top-2 right-2 bg-background/80 hover:bg-background border-border text-foreground backdrop-blur-md font-mono text-xs">
-                                {item.postedAt}
-                            </Badge>
+                            
+                            <div className="space-y-2">
+                                <Label>Item Name</Label>
+                                <Input 
+                                    placeholder="e.g. 999x Azoth or 'Max Stat Storm Pet'" 
+                                    value={newItem.title || ''}
+                                    onChange={e => setNewItem({...newItem, title: e.target.value})}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Batch Size</Label>
+                                    <Input 
+                                        type="number" 
+                                        value={newItem.batchSize || 1}
+                                        onChange={e => setNewItem({...newItem, batchSize: parseInt(e.target.value)})}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Price (Total)</Label>
+                                    <Input 
+                                        type="number" 
+                                        placeholder="Amount in Empowers"
+                                        value={newItem.pricePerBatch || ''}
+                                        onChange={e => setNewItem({...newItem, pricePerBatch: parseInt(e.target.value)})}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <CardHeader className="pb-2">
+                        <DialogFooter>
+                            <Button onClick={handleCreate} disabled={creating}>
+                                {creating ? "Listing..." : "Post Listing"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {listings.map(item => (
+                    <Card key={item.id} className="group hover:border-accent-gold/50 transition-colors">
+                        <CardHeader className="pb-3">
                             <div className="flex justify-between items-start">
-                                <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider mb-2">
-                                    {item.category}
-                                </Badge>
+                                <Badge variant="outline" className="capitalize">{item.type.replace('_', ' ')}</Badge>
+                                <span className="text-xs text-muted-foreground">{new Date((item.createdAt as any).seconds * 1000).toLocaleDateString()}</span>
                             </div>
-                            <CardTitle className="text-lg font-serif leading-tight group-hover:text-primary transition-colors">
-                                {item.title}
-                            </CardTitle>
+                            <CardTitle className="text-lg mt-2 truncate">{item.title}</CardTitle>
                         </CardHeader>
-                        <CardContent className="pb-2">
-                            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
-                                {item.description}
-                            </p>
+                        <CardContent className="text-sm text-muted-foreground pb-3">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Package className="w-4 h-4" />
+                                <span>Batch: {item.batchSize}x</span>
+                            </div>
+                            <div className="font-mono text-primary font-bold text-lg flex items-center gap-2">
+                                {item.pricePerBatch} <span className="text-xs text-muted-foreground font-sans font-normal">Empowers</span>
+                            </div>
                         </CardContent>
-                        <CardFooter className="pt-4 border-t bg-muted/20 flex justify-between items-center">
-                            <div className="flex items-center gap-1.5 font-medium text-foreground">
-                                <Coins className="w-4 h-4 text-yellow-500" />
-                                <span>{item.price}</span>
-                                <span className="text-xs text-muted-foreground uppercase">{item.currency}</span>
-                            </div>
-                             <div className="text-xs text-muted-foreground">
-                                by {item.sellerName}
-                            </div>
+                        <CardFooter>
+                            <Button className="w-full" onClick={() => handleBuy(item)}>
+                                Ping to Buy
+                            </Button>
                         </CardFooter>
                     </Card>
                 ))}
-            </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
+             </div>
+        </div>
+    );
 }

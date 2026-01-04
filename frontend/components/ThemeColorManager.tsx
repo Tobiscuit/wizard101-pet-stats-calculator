@@ -17,7 +17,7 @@ export function ThemeColorManager() {
       abyss: "#002b36",      // Solarized Abyss (Navy/Teal)
     }
 
-    let themeColor = themeColors[resolvedTheme || "light"] || themeColors.light
+    const themeColor = themeColors[resolvedTheme || "light"] || themeColors.light
     
     if (metaThemeColor) {
       metaThemeColor.setAttribute("content", themeColor)

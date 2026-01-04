@@ -42,7 +42,8 @@ import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider"
-import { AppShell } from "@/components/layout/AppShell"; // Added import for AppShell
+import { AppShell } from "@/components/layout/AppShell";
+import OrderDashboard from "@/components/marketplace/OrderDashboard"; // Added import for AppShell
 
 import { PresenceTracker } from "@/components/PresenceTracker";
 import { ThemeColorManager } from "@/components/ThemeColorManager";
@@ -71,6 +72,7 @@ export default function RootLayout({
             <AppShell>
                 {children}
             </AppShell>
+            <OrderDashboard />
             <Toaster />
           </ThemeProvider>
         </SessionProvider>

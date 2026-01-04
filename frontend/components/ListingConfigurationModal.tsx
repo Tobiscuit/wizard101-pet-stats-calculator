@@ -40,7 +40,7 @@ export function ListingConfigurationModal({ pet, isOpen, onClose, onConfirm, sav
 
     useEffect(() => {
         if (pet && pet.currentStats) {
-            let stats = { ...pet.currentStats };
+            const stats = { ...pet.currentStats };
             const jewel = JEWELS.find(j => j.id === selectedJewel);
 
             if (jewel && jewel.bonus) {

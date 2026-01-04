@@ -87,8 +87,8 @@ export async function listPetInMarketplace(petId: string, listingData: any, disc
         const userData = userDoc.data();
 
         // Priority 1: Discord ID from OAuth (best UX)
-        let discordId = userData?.discordId || null;
-        let finalDiscordUsername = discordUsername || userData?.discordUsername || null;
+        const discordId = userData?.discordId || null;
+        const finalDiscordUsername = discordUsername || userData?.discordUsername || null;
 
         // If user provided a username this time, save it for future use
         if (discordUsername) {
