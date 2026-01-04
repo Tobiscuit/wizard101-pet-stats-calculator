@@ -2,13 +2,13 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Wizard101 Pet Tome',
-        short_name: 'Pet Tome',
-        description: 'The ultimate Wizard101 pet stats calculator and manager.',
+        name: 'The Commons | Wizard101 Community Hub',
+        short_name: 'The Commons',
+        description: 'The permanent home for Wizard101 guilds, trading, and lore.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#1a1625',
-        theme_color: '#ffd700',
+        background_color: '#002b36',
+        theme_color: '#b58900',
         icons: [
             {
                 src: '/icons/icon-192x192.png',
