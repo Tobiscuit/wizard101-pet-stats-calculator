@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, Bot, User, Sparkles } from "lucide-react"
-import { chatWithGamma } from "@/app/actions" // Assuming this import exists for chatWithGamma
-import { ChatMessage } from "@/lib/types" // Assuming this import exists for ChatMessage
+import { chatWithGamma, ChatMessage } from "@/app/actions/scribe"
 
 type Message = {
   id: string
