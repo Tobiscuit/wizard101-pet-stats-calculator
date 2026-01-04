@@ -52,7 +52,7 @@ export function ScribeWidget() {
             <Bot className="h-6 w-6 text-accent-gold" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[400px] sm:w-[540px] flex flex-col p-0 gap-0 border-l-accent-gold/20">
+      <SheetContent side="right" className="w-full sm:w-[540px] flex flex-col p-0 gap-0 border-l-accent-gold/20 h-[100dvh]">
         <SheetHeader className="p-6 border-b bg-muted/20">
             <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border border-accent-gold/30">
@@ -94,7 +94,7 @@ export function ScribeWidget() {
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t bg-background/50 backdrop-blur">
+        <div className="p-4 pb-safe border-t bg-background/50 backdrop-blur sticky bottom-0">
           <div className="flex gap-2 relative">
              <Input
                 placeholder="Ask about reagents, drops, or cheats..."
