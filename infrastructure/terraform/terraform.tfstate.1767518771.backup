@@ -1,0 +1,282 @@
+{
+  "version": 4,
+  "terraform_version": "1.13.0",
+  "serial": 30,
+  "lineage": "2b89895a-a5b6-b164-9b93-fac39c410d01",
+  "outputs": {
+    "server_ip": {
+      "value": "178.156.182.3",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "hcloud_firewall",
+      "name": "nexus_security",
+      "provider": "provider[\"registry.terraform.io/hetznercloud/hcloud\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "apply_to": [
+              {
+                "label_selector": "",
+                "server": 116696492
+              }
+            ],
+            "id": "10359700",
+            "labels": {},
+            "name": "nexus-firewall",
+            "rule": [
+              {
+                "description": "",
+                "destination_ips": [],
+                "direction": "in",
+                "port": "443",
+                "protocol": "udp",
+                "source_ips": [
+                  "0.0.0.0/0",
+                  "::/0"
+                ]
+              },
+              {
+                "description": null,
+                "destination_ips": [],
+                "direction": "in",
+                "port": "22",
+                "protocol": "tcp",
+                "source_ips": [
+                  "0.0.0.0/0",
+                  "::/0"
+                ]
+              },
+              {
+                "description": null,
+                "destination_ips": [],
+                "direction": "in",
+                "port": "443",
+                "protocol": "tcp",
+                "source_ips": [
+                  "0.0.0.0/0",
+                  "::/0"
+                ]
+              },
+              {
+                "description": null,
+                "destination_ips": [],
+                "direction": "in",
+                "port": "80",
+                "protocol": "tcp",
+                "source_ips": [
+                  "0.0.0.0/0",
+                  "::/0"
+                ]
+              },
+              {
+                "description": null,
+                "destination_ips": [],
+                "direction": "in",
+                "port": "8000",
+                "protocol": "tcp",
+                "source_ips": [
+                  "76.208.38.206/32"
+                ]
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "hcloud_firewall_attachment",
+      "name": "nexus_security_attachment",
+      "provider": "provider[\"registry.terraform.io/hetznercloud/hcloud\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "firewall_id": 10359700,
+            "id": "10359700",
+            "label_selectors": [],
+            "server_ids": [
+              116696492
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "hcloud_firewall.nexus_security",
+            "hcloud_server.nexus_production",
+            "hcloud_ssh_key.jrcodex_admin"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "hcloud_server",
+      "name": "nexus_production",
+      "provider": "provider[\"registry.terraform.io/hetznercloud/hcloud\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "allow_deprecated_images": false,
+            "backup_window": "",
+            "backups": false,
+            "datacenter": "ash-dc1",
+            "delete_protection": false,
+            "firewall_ids": [
+              10359700
+            ],
+            "id": "116696492",
+            "ignore_remote_firewall_ids": false,
+            "image": "ubuntu-24.04",
+            "ipv4_address": "178.156.182.3",
+            "ipv6_address": "2a01:4ff:f0:cb62::1",
+            "ipv6_network": "2a01:4ff:f0:cb62::/64",
+            "iso": null,
+            "keep_disk": false,
+            "labels": {},
+            "location": "ash",
+            "name": "nexus-core-01",
+            "network": [],
+            "placement_group_id": 0,
+            "primary_disk_size": 160,
+            "public_net": [],
+            "rebuild_protection": false,
+            "rescue": null,
+            "server_type": "ccx23",
+            "shutdown_before_deletion": false,
+            "ssh_keys": [
+              "105128675"
+            ],
+            "status": "running",
+            "timeouts": null,
+            "user_data": "zO1j65YTSM3qArllgzvACZsZnxA="
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo1NDAwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "hcloud_ssh_key.jrcodex_admin"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "hcloud_ssh_key",
+      "name": "jrcodex_admin",
+      "provider": "provider[\"registry.terraform.io/hetznercloud/hcloud\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "fingerprint": "b7:11:cc:c4:2b:e1:30:f5:be:4e:f6:03:dc:0c:be:35",
+            "id": "105128675",
+            "labels": {},
+            "name": "jrcodex-rhel-key",
+            "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYkbi84R3/FYCx4PClpX/NJUavpVdiOzU/bnUZLcRFB"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "vercel_dns_record",
+      "name": "api_commons",
+      "provider": "provider[\"registry.terraform.io/vercel/vercel\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "comment": "",
+            "domain": "jrcodex.dev",
+            "id": "rec_2a338b73c240b7aff78f7299",
+            "mx_priority": null,
+            "name": "api.commons",
+            "srv": null,
+            "team_id": null,
+            "ttl": 60,
+            "type": "A",
+            "value": "178.156.182.3"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "dependencies": [
+            "hcloud_server.nexus_production",
+            "hcloud_ssh_key.jrcodex_admin"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "vercel_dns_record",
+      "name": "commons",
+      "provider": "provider[\"registry.terraform.io/vercel/vercel\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "comment": "",
+            "domain": "jrcodex.dev",
+            "id": "rec_701038863b9ecb1cd3d6a0c4",
+            "mx_priority": null,
+            "name": "commons",
+            "srv": null,
+            "team_id": null,
+            "ttl": 60,
+            "type": "A",
+            "value": "178.156.182.3"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "dependencies": [
+            "hcloud_server.nexus_production",
+            "hcloud_ssh_key.jrcodex_admin"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "vercel_dns_record",
+      "name": "panel",
+      "provider": "provider[\"registry.terraform.io/vercel/vercel\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "comment": "",
+            "domain": "jrcodex.dev",
+            "id": "rec_b9c3a81f2ae5aa805c0dab68",
+            "mx_priority": null,
+            "name": "panel",
+            "srv": null,
+            "team_id": null,
+            "ttl": 60,
+            "type": "A",
+            "value": "178.156.182.3"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "dependencies": [
+            "hcloud_server.nexus_production",
+            "hcloud_ssh_key.jrcodex_admin"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
