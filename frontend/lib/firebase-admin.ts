@@ -1,16 +1,22 @@
 import { initializeApp, getApps, cert, getApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
+import { safeJsonParse } from "@/lib/safe-json";
+
 export function getFirebaseAdminApp() {
     if (getApps().length === 0) {
-        const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+        // 1. Prevent SDK from auto-reading potential bad env vars
+        delete process.env.FIREBASE_CONFIG;
 
+        const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
         let credential;
+
         if (serviceAccountKey) {
-            try {
-                credential = cert(JSON.parse(serviceAccountKey));
-            } catch (e) {
-                console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY", e);
+            const parsed = safeJsonParse(serviceAccountKey);
+            if (parsed) {
+                credential = cert(parsed);
+            } else {
+                console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY (returned null)");
             }
         }
 

@@ -2,16 +2,9 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
-let firebaseConfig;
+import { safeJsonParse } from "@/lib/safe-json";
 
-try {
-  firebaseConfig = process.env.NEXT_PUBLIC_FIREBASE_CONFIG
-    ? JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG)
-    : null;
-} catch (error) {
-  console.error("Failed to parse NEXT_PUBLIC_FIREBASE_CONFIG:", error);
-  firebaseConfig = null;
-}
+const firebaseConfig = safeJsonParse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG);
 
 export function getFirebaseApp() {
   if (getApps().length === 0) {
