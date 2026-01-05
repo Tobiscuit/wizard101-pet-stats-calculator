@@ -35,8 +35,11 @@ export function ScribeWidget() {
 
   useEffect(() => {
     // Auto-scroll to bottom
+    // Auto-scroll to bottom with small delay to ensure DOM render
     if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
+        setTimeout(() => {
+            scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
+        }, 100);
     }
   }, [messages, isLoading])
 
