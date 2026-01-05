@@ -44,7 +44,8 @@ async function retrieveContext(query: string) {
         const queryVector = emRes.embedding.values;
 
         // 2. Search Supabase (RPC match_documents)
-        // Note: 'match_documents' arg names must match the SQL definition EXACTLY.
+        console.log(`[Gamma] Searching Supabase for: "${query}" (Threshold: 0.4)`);
+        
         const { data: chunks, error } = await sb.rpc("match_documents", {
             query_embedding: queryVector,
             match_threshold: 0.4, // Strictness Tuned (0.5 was too high)
@@ -52,12 +53,17 @@ async function retrieveContext(query: string) {
         });
 
         if (error) {
-            console.error("Supabase vector search error:", error);
+            console.error("[Gamma] Supabase vector search error:", error);
             return "";
         }
         
-        if (!chunks || chunks.length === 0) return "";
-
+        if (!chunks || chunks.length === 0) {
+            console.warn("[Gamma] No relevant documents found in Arcanum Archives.");
+            return "";
+        }
+        
+        console.log(`[Gamma] Found ${chunks.length} docs. Top Score: ${chunks[0].similarity.toFixed(4)}`);
+        
         // 3. Format Context
         const contextText = chunks.map((c: any) => 
             `[Source: ${c.category} | ${c.title}]\n${c.content}`
