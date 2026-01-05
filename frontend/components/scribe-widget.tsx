@@ -109,8 +109,8 @@ export function ScribeWidget() {
             </div>
         </SheetHeader>
         
-        <div className="flex-1 overflow-y-auto p-6 relative">
-             <div className="flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto p-6 relative scrollbar-thin scrollbar-thumb-accent-gold/20 scrollbar-track-transparent">
+             <div className="flex flex-col gap-4 pb-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -118,14 +118,14 @@ export function ScribeWidget() {
               >
                 {/* Assistant Avatar (Left) */}
                 {msg.role === "assistant" && (
-                    <Avatar className="h-8 w-8 mt-1 border border-border">
+                    <Avatar className="h-8 w-8 mt-1 border border-border shrink-0">
                         <AvatarFallback className="bg-primary/10"><Bot className="h-4 w-4 text-primary" /></AvatarFallback>
                     </Avatar>
                 )}
 
                 {/* Message Bubble */}
                 <div
-                  className={`rounded-lg p-3 text-sm max-w-[85%] prose prose-sm dark:prose-invert leading-relaxed ${
+                  className={`rounded-lg p-3 text-sm max-w-[85%] prose prose-sm dark:prose-invert leading-relaxed break-words ${
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground" 
                       : "bg-muted text-foreground"
@@ -138,7 +138,7 @@ export function ScribeWidget() {
 
                 {/* User Avatar (Right) */}
                 {msg.role === "user" && (
-                  <Avatar className="h-8 w-8 mt-1 border border-border">
+                  <Avatar className="h-8 w-8 mt-1 border border-border shrink-0">
                     <AvatarFallback className="bg-muted"><User className="h-4 w-4" /></AvatarFallback>
                   </Avatar>
                 )}
@@ -146,7 +146,7 @@ export function ScribeWidget() {
             ))}
             {isLoading && (
                  <div className="flex gap-3 flex-row">
-                    <Avatar className="h-8 w-8 mt-1 border border-border">
+                    <Avatar className="h-8 w-8 mt-1 border border-border shrink-0">
                         <AvatarFallback className="bg-primary/10"><Bot className="h-4 w-4 text-primary" /></AvatarFallback>
                     </Avatar>
                     <div className="rounded-2xl px-4 py-2 bg-muted text-muted-foreground rounded-tl-none border border-border/50">
