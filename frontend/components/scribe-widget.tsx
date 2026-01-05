@@ -36,7 +36,7 @@ export function ScribeWidget() {
   useEffect(() => {
     // Auto-scroll to bottom
     if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ behavior: "smooth" })
+        scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
     }
   }, [messages, isLoading])
 

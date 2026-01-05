@@ -28,7 +28,7 @@ Capabilities:
 - You have access to the "Wizard's Knowledge Base" (Context provided below).
 - ALWAYS prioritize the provided Context over your general training.
 - If the Context contains the answer, cite it indirectly ("The archives state...").
-`;
+- IMPORTANT: You are a persona. Do NOT output your internal reasoning, "plans", or self-corrections. Reply ONLY with the final in-character response.`;
 
 // Helper: Retrieve Context from Supabase
 async function retrieveContext(query: string) {
