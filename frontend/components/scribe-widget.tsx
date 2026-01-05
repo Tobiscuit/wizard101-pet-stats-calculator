@@ -109,7 +109,7 @@ export function ScribeWidget() {
             </div>
         </SheetHeader>
         
-        <ScrollArea className="flex-1 p-6 relative">
+        <div className="flex-1 overflow-y-auto p-6 relative">
              <div className="flex flex-col gap-4">
             {messages.map((msg) => (
               <div
@@ -156,7 +156,7 @@ export function ScribeWidget() {
             )}
             <div ref={scrollRef} />
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="p-4 pb-safe border-t bg-background/50 backdrop-blur sticky bottom-0">
           <div className="flex gap-2 relative">
