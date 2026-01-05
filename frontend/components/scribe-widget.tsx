@@ -122,13 +122,13 @@ export function ScribeWidget() {
 
                 {/* Message Bubble */}
                 <div
-                  className={`rounded-lg p-3 text-sm max-w-[85%] ${
+                  className={`rounded-lg p-3 text-sm max-w-[85%] prose prose-sm dark:prose-invert leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-primary text-primary-foreground" // Theme-aware High Contrast
+                      ? "bg-primary text-primary-foreground prose-headings:text-primary-foreground prose-p:text-primary-foreground prose-strong:text-primary-foreground" 
                       : "bg-muted text-foreground"
                   }`}
                 >
-                  <ReactMarkdown className="prose prose-sm dark:prose-invert">
+                  <ReactMarkdown>
                     {msg.content}
                   </ReactMarkdown>
                 </div>
