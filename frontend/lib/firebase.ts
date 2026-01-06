@@ -32,11 +32,10 @@ import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager
 
 // ... (existing imports)
 
-// Initialize Firestore with settings for better offline support
+// Initialize Firestore with standard offline persistence (V9+ Modular SDK)
 export const db = initializeFirestore(getFirebaseApp(), {
     localCache: persistentLocalCache({
         tabManager: persistentMultipleTabManager()
-    }),
-    experimentalForceLongPolling: true, // Forces long polling to avoid WebSocket issues
+    })
 });
 export const auth = getAuth(getFirebaseApp());
