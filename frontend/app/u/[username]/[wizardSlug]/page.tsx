@@ -72,7 +72,7 @@ async function getProfileData(username: string, wizardSlug: string): Promise<Pro
     }
 
     const userDoc = usersSnap.docs[0];
-    const user = { id: userDoc.id, ...userDoc.data() } as UserProfile;
+    const user = { id: userDoc.id, ...userDoc.data() } as unknown as UserProfile;
 
     // 2. Find Wizard by Slug (Name)
     // We slugify the input: "wolf-stormblade" -> "Wolf StormBlade" (Reverse is hard, so we scan)
@@ -95,7 +95,7 @@ async function getProfileData(username: string, wizardSlug: string): Promise<Pro
         return null;
     }
 
-    const wizard = { id: targetWizardDoc.id, ...targetWizardDoc.data() } as Wizard;
+    const wizard = { id: targetWizardDoc.id, ...targetWizardDoc.data() } as unknown as Wizard;
 
     // 3. Get Public Pets (Lendable Only)
     const petsSnap = await db.collection('pets')
@@ -103,7 +103,7 @@ async function getProfileData(username: string, wizardSlug: string): Promise<Pro
         .where('isLendable', '==', true)
         .get();
 
-    const pets = petsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Pet));
+    const pets = petsSnap.docs.map(d => ({ id: d.id, ...d.data() } as unknown as Pet));
 
     return { user, wizard, pets };
 }
