@@ -265,6 +265,39 @@
     @apply bg-background text-foreground;
     overflow-x: hidden;
   }
+  
+  /* Bleeding Edge 2025: Unify Markdown Typography with Theme System */
+  /* This ensures prose-body, prose-headings, prose-links ALWAYS match the active theme's accessible palette */
+  .prose {
+    --tw-prose-body: hsl(var(--foreground));
+    --tw-prose-headings: hsl(var(--foreground));
+    --tw-prose-lead: hsl(var(--muted-foreground));
+    --tw-prose-links: hsl(var(--primary));
+    --tw-prose-bold: hsl(var(--foreground));
+    --tw-prose-counters: hsl(var(--muted-foreground));
+    --tw-prose-bullets: hsl(var(--muted-foreground));
+    --tw-prose-hr: hsl(var(--border));
+    --tw-prose-quotes: hsl(var(--foreground));
+    --tw-prose-quote-borders: hsl(var(--border));
+    --tw-prose-captions: hsl(var(--muted-foreground));
+    --tw-prose-code: hsl(var(--foreground));
+    --tw-prose-pre-code: hsl(var(--foreground));
+    --tw-prose-pre-bg: hsl(var(--muted));
+    --tw-prose-th-borders: hsl(var(--border));
+    --tw-prose-td-borders: hsl(var(--border));
+    /* Invert for Dark/Abyss is handled by simply swapping the underlying variables! */
+    /* So we barely need prose-invert if we do this right, but prose-invert helps with specificity in some cases */
+  }
+
+  .prose-invert {
+      --tw-prose-body: hsl(var(--foreground));
+      --tw-prose-headings: hsl(var(--foreground));
+      --tw-prose-links: hsl(var(--primary));
+      --tw-prose-bold: hsl(var(--foreground));
+      --tw-prose-pre-bg: hsl(var(--muted));
+      --tw-prose-th-borders: hsl(var(--border));
+      --tw-prose-td-borders: hsl(var(--border));
+  }
 }
 
 @layer utilities {
