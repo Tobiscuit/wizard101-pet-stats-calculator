@@ -157,7 +157,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
   const { setTheme, theme } = useTheme()
-  const { state } = useSidebar()
+  const { state, setOpenMobile } = useSidebar()
   const pathname = usePathname()
 
   return (
@@ -223,7 +223,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton tooltip={item.title} className="hover:bg-accent-gold/10 transition-colors duration-300">
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                         <MoreHorizontal className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -233,8 +233,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSub>
                         {item.items?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
-                              <Link href={subItem.url}>
+                            <SidebarMenuSubButton 
+                                asChild 
+                                isActive={pathname === subItem.url}
+                                className="hover:translate-x-1 transition-transform duration-200"
+                            >
+                              <Link href={subItem.url} onClick={() => setOpenMobile(false)}>
                                 <span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>
