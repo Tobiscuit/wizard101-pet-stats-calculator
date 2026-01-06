@@ -36,6 +36,11 @@ export const metadata: Metadata = {
     title: "The Commons | Wizard101 Community Hub",
     description: "Calculate pet talent stats, simulate jewel sockets, and trade pets with the dedicated Wizard101 community.",
   },
+  icons: {
+    icon: "/images/gamma-icon.png",
+    shortcut: "/images/gamma-icon.png",
+    apple: "/images/gamma-icon.png",
+  },
 };
 
 import { SessionProvider } from "next-auth/react";
