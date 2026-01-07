@@ -1,19 +1,10 @@
-import { Pet, UserProfile } from '@/types/firestore';
+import { Pet } from '@/types/firestore';
 import { calculateTalentValue } from '@/lib/talent-formulas';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
-    Sword, 
-    Shield, 
-    Crosshair, 
-    Zap, 
-    CircleDashed, 
-    Sparkles, 
-    Brain, 
-    BicepsFlexed, 
-    Wind, 
-    Scroll,
-    Dna
+    Sword, Shield, Crosshair, CircleDashed, Sparkles, BicepsFlexed, Dna,
+    Zap, Gem, ScrollText
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -22,87 +13,129 @@ type Props = {
     className?: string;
 };
 
+// --- Config ---
+const PARCHMENT_BG = "bg-[#fcfbf7]"; // Light Cream
+const PARCHMENT_BORDER = "border-[#eaddcf]"; 
+
+// Mock Data for "Item Cards" (Cards the pet body gives)
+function getItemCards(body: string) {
+    const b = body.toLowerCase();
+    if (b.includes('rain core')) return ['Supercharge', 'Stormblade'];
+    if (b.includes('ghulture')) return ['Deathblade', 'Feint'];
+    if (b.includes('gryphon')) return ['Balanceblade', 'Feint'];
+    if (b.includes('frillasaur')) return ['Fireblade', 'Fuel'];
+    return ['Blade (Generic)']; // Fallback
+}
+
 // --- Helpers ---
 const TALENT_TYPES = [
-    { keywords: ['dealer', 'giver', 'boon', 'bringer', 'pain'], icon: Sword, color: 'text-red-500 bg-red-500/10 border-red-500/20' },
-    { keywords: ['proof', 'defy', 'ward', 'block'], icon: Shield, color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/20' },
-    { keywords: ['sniper', 'sharp', 'shot', 'accuracy'], icon: Crosshair, color: 'text-purple-500 bg-purple-500/10 border-purple-500/20' },
-    { keywords: ['pierce', 'breaker'], icon: Sword, color: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' }, // Pierce uses sword but yellow
-    { keywords: ['pip', 'plenty'], icon: CircleDashed, color: 'text-orange-500 bg-orange-500/10 border-orange-500/20' },
-    { keywords: ['mighty', 'thinking', 'relentless', 'brilliant', 'powerful', 'cautious'], icon: BicepsFlexed, color: 'text-slate-500 bg-slate-500/10 border-slate-500/20' }, // Stat boosters
-    { keywords: ['may cast', 'healing', 'sprite', 'unicorn', 'fairy'], icon: Sparkles, color: 'text-green-500 bg-green-500/10 border-green-500/20' }
+    { keywords: ['dealer', 'giver', 'boon', 'bringer', 'pain'], icon: Sword, color: 'bg-red-900/10 text-red-900 border-red-900/20' },
+    { keywords: ['proof', 'defy', 'ward', 'block'], icon: Shield, color: 'bg-cyan-900/10 text-cyan-900 border-cyan-900/20' },
+    { keywords: ['sniper', 'sharp', 'shot', 'accuracy'], icon: Crosshair, color: 'bg-purple-900/10 text-purple-900 border-purple-900/20' },
+    { keywords: ['pierce', 'breaker'], icon: Sword, color: 'bg-yellow-900/10 text-yellow-900 border-yellow-900/20' }, 
+    { keywords: ['pip', 'plenty'], icon: CircleDashed, color: 'bg-orange-900/10 text-orange-900 border-orange-900/20' },
+    { keywords: ['mighty', 'thinking', 'relentless'], icon: BicepsFlexed, color: 'bg-stone-900/10 text-stone-900 border-stone-900/20' },
+    { keywords: ['may cast', 'healing'], icon: Sparkles, color: 'bg-green-900/10 text-green-900 border-green-900/20' }
 ];
 
 function getTalentMetadata(name: string) {
     const lower = name.toLowerCase();
     const match = TALENT_TYPES.find(t => t.keywords.some(k => lower.includes(k)));
-    
-    if (match) return match;
-    
-    return { icon: Dna, color: 'text-muted-foreground bg-muted/10 border-border/50' };
+    return match || { icon: Dna, color: 'bg-muted/50 text-muted-foreground border-border/50' };
 }
 
 export function PetCard({ pet, className }: Props) {
-    const displayTalents = pet.talents.slice(0, 6); // Max 6 usually
+    const displayTalents = pet.talents.slice(0, 6);
+    const itemCards = getItemCards(pet.body);
+    const isSocketed = Math.random() > 0.5; // Mock socket status
 
     return (
-        <Card className={clsx("hover:border-accent-gold/50 transition-colors h-full flex flex-col group overflow-hidden", className)}>
-            <CardHeader className="pb-3">
-                <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                        <CardTitle className="text-lg group-hover:text-accent-gold transition-colors font-serif tracking-tight">
-                            {pet.nickname}
-                        </CardTitle>
-                        <CardDescription className="font-medium text-xs uppercase tracking-wider block">
+        <Card className={clsx(
+            "relative group overflow-hidden transition-all duration-300",
+            "shadow-sm hover:shadow-md border",
+            PARCHMENT_BG, PARCHMENT_BORDER,
+            className
+        )}>
+            {/* "Listed" Badge (Top Right) */}
+            <div className="absolute top-4 right-4 animate-in fade-in zoom-in duration-500">
+                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm border-stone-300 font-serif text-stone-600 shadow-sm">
+                    Listed
+                </Badge>
+            </div>
+
+            <CardContent className="p-6 flex flex-col h-full gap-5">
+                
+                {/* 1. Header: Identity */}
+                <div>
+                    <h3 className="text-2xl font-bold font-serif text-[#2c241b] tracking-tight group-hover:text-accent-gold transition-colors">
+                        {pet.nickname.toUpperCase()}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                         <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-stone-500 bg-stone-100 border-stone-200">
+                            {pet.school || "Balance"}
+                        </Badge>
+                        <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-stone-500 bg-stone-100 border-stone-200">
+                            Mega
+                        </Badge>
+                        <span className="text-xs font-serif italic text-stone-400">
                             {pet.body}
-                        </CardDescription>
+                        </span>
                     </div>
-                    {pet.school && (
-                         <Badge variant="secondary" className="text-xs">{pet.school}</Badge>
-                    )}
                 </div>
-            </CardHeader>
-            <CardContent className="flex-1">
-                {/* Talent Grid */}
+
+                {/* 2. Talents Grid */}
                 <div className="flex flex-wrap gap-2">
                     {displayTalents.map((talent, i) => {
                         const { icon: Icon, color } = getTalentMetadata(talent);
                         const valueStr = pet.stats ? calculateTalentValue(talent, pet.stats) : null;
-
+                        
                         return (
-                            <div 
-                                key={i} 
-                                className={clsx(
-                                    "px-2 py-1.5 rounded-md border flex items-center gap-2 text-xs font-semibold transition-all hover:scale-105 cursor-help",
-                                    color
+                            <div key={i} className={clsx(
+                                "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wide border transition-transform hover:scale-105 select-none",
+                                color
+                            )} title={valueStr || talent}>
+                                {valueStr ? (
+                                    <>
+                                        <span>{talent.split(' ')[0]}</span> 
+                                        {/* Truncate long names like "Pain-Giver" -> "Pain" for aesthetics? No, keep logic simple */}
+                                    </>
+                                ) : (
+                                    <span>{talent}</span>
                                 )}
-                                title={valueStr ? `Calculated Value: ${valueStr}` : "Utility Talent"}
-                            >
-                                <Icon className="w-3.5 h-3.5 opacity-70" />
-                                <span>{talent}</span>
-                                {valueStr && (
-                                    <span className="ml-1 opacity-90 bg-background/50 px-1 rounded text-[10px]">
-                                        {valueStr.replace('%', '')}%
-                                    </span>
-                                )}
+                                {valueStr && <span className="opacity-70 text-[10px] ml-0.5">{valueStr}</span>}
                             </div>
                         );
                     })}
                     {pet.talents.length > 5 && (
-                         <span className="text-xs text-muted-foreground self-center px-1">
+                        <span className="text-xs font-serif italic text-stone-400 self-center">
                             +{pet.talents.length - 6} more
-                         </span>
+                        </span>
                     )}
                 </div>
 
-                {/* Stat Bar (Micro) */}
-                {pet.stats && (
-                    <div className="mt-4 pt-3 border-t flex justify-between text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">
-                        <span>STR {pet.stats.strength}</span>
-                        <span>WIL {pet.stats.will}</span>
-                        <span>POW {pet.stats.power}</span>
+                {/* 3. Footer: Stats & Meta */}
+                <div className="mt-auto pt-4 border-t border-stone-200/50 flex items-center justify-between text-stone-400">
+                    
+                    {/* Item Cards Given */}
+                    <div className="flex -space-x-2">
+                        {itemCards.map((card, i) => (
+                            <div key={i} className="w-6 h-8 rounded bg-gradient-to-br from-stone-200 to-stone-300 border border-stone-400 flex items-center justify-center shadow-sm" title={card}>
+                                <ScrollText className="w-3 h-3 text-stone-600" />
+                            </div>
+                        ))}
                     </div>
-                )}
+
+                    {/* Socket */}
+                    <div className="flex items-center gap-2" title="Jewel Socket">
+                         <div className={clsx(
+                             "w-6 h-6 rounded-full border-2 flex items-center justify-center",
+                             isSocketed ? "bg-accent-gold/20 border-accent-gold text-accent-gold" : "border-stone-300 border-dashed text-stone-300"
+                         )}>
+                             <Gem className="w-3 h-3" />
+                         </div>
+                    </div>
+                </div>
+
             </CardContent>
         </Card>
     );
