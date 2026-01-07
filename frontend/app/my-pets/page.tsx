@@ -4,11 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { MagicCard } from "@/components/magicui/magic-card"
+import { PetDetailDialog } from '@/components/pet-detail-dialog';
 import { Button } from "@/components/ui/button"
 import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { getPets, listPetInMarketplace, unlistPetFromMarketplace, deletePet, getUserProfile } from '@/app/actions';
-import { PetDetailsModal } from '@/components/PetDetailsModal';
+            {/* Pet Details Modal */}
+            <PetDetailDialog
+                pet={selectedPet}
+                open={!!selectedPet}
+                onClose={() => setSelectedPet(null)}
+                onListInMarketplace={handleOpenListingConfig}
+                onUnlistFromMarketplace={handleUnlistPet}
+                onDelete={handleDeletePet}
+            />
 
 import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
 

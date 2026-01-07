@@ -8,22 +8,34 @@ import { Trash2, Share2, EyeOff, Sparkles, Sword, Shield, Crosshair } from 'luci
 import { clsx } from 'clsx';
 import { ReactNode } from 'react';
 
-type Props = {
-    pet: Pet;
-    children: ReactNode; // The Trigger (e.g., PetCard)
+// Intersection type to handle both Firestore Pet and Client-Side Scan Result
+type DisplayPet = Pet & {
+    petSchool?: string; // Legacy/Client alias for school
+    petType?: string;   // Legacy/Client alias for body
+    petAge?: string;
+    currentStats?: Pet['stats']; // Alias for stats
+    advice?: string;
+    listedInMarketplace?: boolean;
 };
 
-export function PetDetailDialog({ pet, children }: Props) {
+type Props = {
+    pet: DisplayPet | null;
+    open: boolean;
+    onClose: () => void;
+    onListInMarketplace?: (pet: Pet) => void;
+    onUnlistFromMarketplace?: (pet: Pet) => void;
+    onDelete?: (pet: Pet) => void;
+};
+
+export function PetDetailDialog({ pet, open, onClose, onListInMarketplace, onUnlistFromMarketplace, onDelete }: Props) {
+    if (!pet) return null;
     const potentials = pet.stats ? calculateAllPotentials(pet.stats) : null;
 
     // Helper to format percentage
     const fmt = (val?: number) => val ? `${val}%` : '-';
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+        <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
             <DialogContent className="max-w-2xl bg-background text-foreground border-border p-0 overflow-hidden font-serif">
                 
                 {/* Header */}
@@ -31,24 +43,24 @@ export function PetDetailDialog({ pet, children }: Props) {
                     <div className="flex justify-between items-start">
                         <div>
                             <DialogTitle className="text-3xl font-bold tracking-wide text-foreground">
-                                {pet.nickname.toUpperCase()}
+                                {pet.nickname ? pet.nickname.toUpperCase() : (pet.petType || 'UNKNOWN').toUpperCase()}
                             </DialogTitle>
                             <div className="flex gap-2 mt-2">
                                 <Badge variant="secondary" className="uppercase text-xs tracking-wider">
-                                    {pet.school || 'Unknown'}
+                                    {pet.petSchool || pet.school || 'Unknown'}
                                 </Badge>
                                 <Badge variant="secondary" className="uppercase text-xs tracking-wider">
-                                    Mega
+                                    {pet.petAge || 'Adult'}
                                 </Badge>
                                 <Badge variant="outline" className="uppercase text-xs tracking-wider border-border text-muted-foreground">
-                                    {pet.body.toUpperCase()}
+                                    {(pet.petType || pet.body || 'Unknown').toUpperCase()}
                                 </Badge>
                             </div>
                         </div>
                     </div>
                 </DialogHeader>
 
-                <div className="p-6 space-y-8">
+                <div className="p-6 space-y-8 max-h-[75vh] overflow-y-auto">
                     
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -56,21 +68,23 @@ export function PetDetailDialog({ pet, children }: Props) {
                         {/* Col 1: Base Stats */}
                         <div className="space-y-4">
                             <h4 className="text-lg font-bold text-foreground border-b border-border pb-2">Base Stats</h4>
-                            {pet.stats && (
+                            {pet.stats || pet.currentStats ? (
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                                    <StatRow label="Strength" val={pet.stats.strength} max={255} />
-                                    <StatRow label="Intellect" val={pet.stats.intellect} max={250} />
-                                    <StatRow label="Agility" val={pet.stats.agility} max={260} />
-                                    <StatRow label="Will" val={pet.stats.will} max={260} />
-                                    <StatRow label="Power" val={pet.stats.power} max={250} />
+                                    <StatRow label="Strength" val={pet.stats?.strength || pet.currentStats?.strength || 0} max={255} />
+                                    <StatRow label="Intellect" val={pet.stats?.intellect || pet.currentStats?.intellect || 0} max={250} />
+                                    <StatRow label="Agility" val={pet.stats?.agility || pet.currentStats?.agility || 0} max={260} />
+                                    <StatRow label="Will" val={pet.stats?.will || pet.currentStats?.will || 0} max={260} />
+                                    <StatRow label="Power" val={pet.stats?.power || pet.currentStats?.power || 0} max={250} />
                                 </div>
+                            ) : (
+                                <span className="text-muted-foreground text-sm">No stats recorded.</span>
                             )}
                         </div>
 
                         {/* Col 2: Max Potential */}
                         <div className="space-y-4">
                             <h4 className="text-lg font-bold text-foreground border-b border-border pb-2">Max Potential</h4>
-                            {potentials && (
+                            {potentials ? (
                                 <div className="space-y-3 text-sm">
                                     {/* Damage */}
                                     <div className="flex items-center gap-2">
@@ -102,6 +116,8 @@ export function PetDetailDialog({ pet, children }: Props) {
                                         </div>
                                     </div>
                                 </div>
+                            ): (
+                                <span className="text-muted-foreground text-sm">Cannot calculate potential without stats.</span>
                             )}
                         </div>
                     </div>
@@ -109,50 +125,92 @@ export function PetDetailDialog({ pet, children }: Props) {
                     {/* Manifested Talents */}
                     <div className="space-y-4">
                         <h4 className="text-lg font-bold text-foreground border-b border-border pb-2">Manifested Talents</h4>
-                        <div className="flex flex-wrap gap-3">
-                            {pet.talents.map((t, i) => {
-                                const val = pet.stats ? calculateTalentValue(t, pet.stats) : null;
-                                return (
-                                    <Badge key={i} variant="outline" className="px-3 py-1.5 border-border text-foreground bg-muted/30 hover:bg-muted transition-colors rounded-full flex items-center gap-2">
-                                        <span className="uppercase font-bold tracking-wide text-xs">{t}</span>
-                                        {val && <span className="font-mono text-primary text-xs">({val})</span>}
-                                    </Badge>
-                                );
-                            })}
-                        </div>
+                        {pet.talents && pet.talents.length > 0 ? (
+                            <div className="flex flex-wrap gap-3">
+                                {pet.talents.map((t, i) => {
+                                    const stats = pet.stats || pet.currentStats;
+                                    const val = stats ? calculateTalentValue(t, stats) : null;
+                                    return (
+                                        <Badge key={i} variant="outline" className="px-3 py-1.5 border-border text-foreground bg-muted/30 hover:bg-muted transition-colors rounded-full flex items-center gap-2">
+                                            <span className="uppercase font-bold tracking-wide text-xs">{t}</span>
+                                            {val && <span className="font-mono text-primary text-xs">({val})</span>}
+                                        </Badge>
+                                    );
+                                })}
+                            </div>
+                         ) : (
+                            <span className="text-muted-foreground text-sm italic">No talents manifested yet.</span>
+                         )}
                     </div>
 
                     {/* Gamma's Wisdom */}
-                    <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 relative">
-                        <div className="flex items-start gap-3">
-                            <Sparkles className="w-5 h-5 text-blue-500 mt-0.5" />
-                            <div>
-                                <h5 className="font-bold text-blue-600 dark:text-blue-400 mb-1">Gamma's Wisdom</h5>
-                                <p className="text-sm text-muted-foreground italic leading-relaxed">
-                                    "This pet has promising damage talents like Pain-Giver. However, the low intellect stat is a drawback. It is not a meta pet, but could be a decent start for building a pet with more specialized talents."
-                                </p>
+                    {pet.advice && (
+                        <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 relative">
+                            <div className="flex items-start gap-3">
+                                <Sparkles className="w-5 h-5 text-blue-500 mt-0.5" />
+                                <div>
+                                    <h5 className="font-bold text-blue-600 dark:text-blue-400 mb-1">Gamma's Wisdom</h5>
+                                    <p className="text-sm text-muted-foreground italic leading-relaxed">
+                                        "{pet.advice}"
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     <Separator className="bg-border" />
 
                     {/* Footer Actions */}
                     <div className="flex justify-between items-center pt-2">
-                         <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
-                            <Trash2 className="w-4 h-4" />
-                            Release Pet
-                        </Button>
+                         {onDelete && (
+                            <Button 
+                                variant="ghost" 
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
+                                onClick={() => {
+                                    if(confirm("Release this pet? This action cannot be undone.")) onDelete(pet);
+                                }}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Release Pet
+                            </Button>
+                        )}
                         
                         <div className="flex gap-3">
-                            <Button variant="secondary" className="gap-2">
+                            <Button 
+                                variant="secondary" 
+                                className="gap-2"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`${window.location.origin}/marketplace/${pet.id}`);
+                                    alert("Link copied!");
+                                }}
+                            >
                                 <Share2 className="w-4 h-4" />
                                 Share
                             </Button>
-                            <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10 gap-2">
-                                <EyeOff className="w-4 h-4" />
-                                Unlist from Kiosk
-                            </Button>
+
+                            {pet.listedInMarketplace ? (
+                                onUnlistFromMarketplace && (
+                                    <Button 
+                                        variant="outline" 
+                                        className="text-destructive border-destructive/30 hover:bg-destructive/10 gap-2"
+                                        onClick={() => onUnlistFromMarketplace(pet)}
+                                    >
+                                        <EyeOff className="w-4 h-4" />
+                                        Unlist from Kiosk
+                                    </Button>
+                                )
+                            ) : (
+                                onListInMarketplace && (
+                                    <Button 
+                                        variant="default" // Primary color
+                                        className="gap-2"
+                                        onClick={() => onListInMarketplace(pet)}
+                                    >
+                                        <Share2 className="w-4 h-4" />
+                                        List in Kiosk
+                                    </Button>
+                                )
+                            )}
                         </div>
                     </div>
                 </div>
