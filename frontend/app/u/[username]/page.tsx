@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from 'next/link';
 import { 
-    Flame, Snowflake, Zap, ghost, Leaf, Scale, Swords, Users, Trophy, Ghost
+    Flame, Snowflake, Zap, Leaf, Scale, Swords, Users, Trophy, Ghost
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
