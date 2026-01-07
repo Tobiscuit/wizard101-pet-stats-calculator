@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getAdminFirestore } from '@/lib/firebase-admin';
 import { Wizard, UserProfile, Pet } from '@/types/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { PetCard } from '@/components/pet-card';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { 
@@ -72,14 +73,27 @@ async function getProfileData(username: string, wizardSlug: string): Promise<Pro
     }
 
     const userDoc = usersSnap.docs[0];
-    const user = { id: userDoc.id, ...userDoc.data() } as unknown as UserProfile;
+    const rawUser = userDoc.data() as UserProfile;
+    
+    // SANITIZATION: Explicitly Pick Public Fields only.
+    // We do NOT spread `...rawUser` to facilitate a partial leak.
+    const user: Partial<UserProfile> = {
+        displayName: rawUser.displayName,
+        photoURL: rawUser.photoURL,
+        hatchReputation: rawUser.hatchReputation,
+        marketReputation: rawUser.marketReputation,
+        vouchCount: rawUser.vouchCount,
+        analytics: rawUser.analytics,
+        // email: NEVER INCLUDE THIS
+        // uid: Not strictly secret, but let's keep it minimal if not needed.
+    };
 
     // 2. Find Wizard by Slug (Name)
     // We slugify the input: "wolf-stormblade" -> "Wolf StormBlade" (Reverse is hard, so we scan)
     // Optimization: Store 'slug' on the wizard doc.
     // MVP: Get all wizards for user and match locally.
     const wizardsSnap = await db.collection('wizards')
-        .where('userId', '==', user.uid)
+        .where('userId', '==', userDoc.id)
         .get();
 
     const normalizedSlug = decodeURIComponent(wizardSlug).toLowerCase();
@@ -99,13 +113,13 @@ async function getProfileData(username: string, wizardSlug: string): Promise<Pro
 
     // 3. Get Public Pets (Lendable Only)
     const petsSnap = await db.collection('pets')
-        .where('userId', '==', user.uid)
+        .where('userId', '==', userDoc.id)
         .where('isLendable', '==', true)
         .get();
 
     const pets = petsSnap.docs.map(d => ({ id: d.id, ...d.data() } as unknown as Pet));
 
-    return { user, wizard, pets };
+    return { user: user as UserProfile, wizard, pets };
 }
 
 // --- Metadata (SEO) ---
@@ -272,26 +286,7 @@ export default async function PublicWizardProfile({ params }: Props) {
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {pets.map(pet => (
                                 <Link href={`/marketplace/pet/${pet.id}`} key={pet.id}>
-                                    <Card className="hover:border-accent-gold/50 transition-colors cursor-pointer group h-full">
-                                        <CardHeader className="pb-2">
-                                            <div className="flex justify-between items-start">
-                                                <CardTitle className="text-lg group-hover:text-accent-gold transition-colors">
-                                                    {pet.nickname}
-                                                </CardTitle>
-                                                <Badge variant="secondary" className="text-xs">{pet.school}</Badge>
-                                            </div>
-                                            <CardDescription>{pet.body}</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="flex flex-wrap gap-1">
-                                                 {pet.talents.slice(0, 5).map((t, i) => (
-                                                    <span key={i} className="text-xs px-1.5 py-0.5 bg-primary/5 text-primary rounded border border-primary/10">
-                                                        {t}
-                                                    </span>
-                                                 ))}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
+                                    <PetCard pet={pet} />
                                 </Link>
                             ))}
                         </div>
