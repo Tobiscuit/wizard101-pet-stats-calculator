@@ -1,10 +1,10 @@
 import { Pet } from '@/types/firestore';
 import { calculateTalentValue } from '@/lib/talent-formulas';
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
     Sword, Shield, Crosshair, CircleDashed, Sparkles, BicepsFlexed, Dna,
-    Zap, Gem, ScrollText
+    Gem, ScrollText
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -12,10 +12,6 @@ type Props = {
     pet: Pet;
     className?: string;
 };
-
-// --- Config ---
-const PARCHMENT_BG = "bg-[#fcfbf7]"; // Light Cream
-const PARCHMENT_BORDER = "border-[#eaddcf]"; 
 
 // Mock Data for "Item Cards" (Cards the pet body gives)
 function getItemCards(body: string) {
@@ -29,19 +25,19 @@ function getItemCards(body: string) {
 
 // --- Helpers ---
 const TALENT_TYPES = [
-    { keywords: ['dealer', 'giver', 'boon', 'bringer', 'pain'], icon: Sword, color: 'bg-red-900/10 text-red-900 border-red-900/20' },
-    { keywords: ['proof', 'defy', 'ward', 'block'], icon: Shield, color: 'bg-cyan-900/10 text-cyan-900 border-cyan-900/20' },
-    { keywords: ['sniper', 'sharp', 'shot', 'accuracy'], icon: Crosshair, color: 'bg-purple-900/10 text-purple-900 border-purple-900/20' },
-    { keywords: ['pierce', 'breaker'], icon: Sword, color: 'bg-yellow-900/10 text-yellow-900 border-yellow-900/20' }, 
-    { keywords: ['pip', 'plenty'], icon: CircleDashed, color: 'bg-orange-900/10 text-orange-900 border-orange-900/20' },
-    { keywords: ['mighty', 'thinking', 'relentless'], icon: BicepsFlexed, color: 'bg-stone-900/10 text-stone-900 border-stone-900/20' },
-    { keywords: ['may cast', 'healing'], icon: Sparkles, color: 'bg-green-900/10 text-green-900 border-green-900/20' }
+    { keywords: ['dealer', 'giver', 'boon', 'bringer', 'pain'], icon: Sword, color: 'bg-red-500/10 text-red-500 border-red-500/20' },
+    { keywords: ['proof', 'defy', 'ward', 'block'], icon: Shield, color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20' },
+    { keywords: ['sniper', 'sharp', 'shot', 'accuracy'], icon: Crosshair, color: 'bg-purple-500/10 text-purple-500 border-purple-500/20' },
+    { keywords: ['pierce', 'breaker'], icon: Sword, color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' }, 
+    { keywords: ['pip', 'plenty'], icon: CircleDashed, color: 'bg-orange-500/10 text-orange-500 border-orange-500/20' },
+    { keywords: ['mighty', 'thinking', 'relentless'], icon: BicepsFlexed, color: 'bg-slate-500/10 text-slate-500 border-slate-500/20' },
+    { keywords: ['may cast', 'healing'], icon: Sparkles, color: 'bg-green-500/10 text-green-500 border-green-500/20' }
 ];
 
 function getTalentMetadata(name: string) {
     const lower = name.toLowerCase();
     const match = TALENT_TYPES.find(t => t.keywords.some(k => lower.includes(k)));
-    return match || { icon: Dna, color: 'bg-muted/50 text-muted-foreground border-border/50' };
+    return match || { icon: Dna, color: 'bg-muted text-muted-foreground border-border/50' };
 }
 
 export function PetCard({ pet, className }: Props) {
@@ -49,105 +45,113 @@ export function PetCard({ pet, className }: Props) {
     const itemCards = getItemCards(pet.body);
     const isSocketed = Math.random() > 0.5; // Mock socket status
 
+    // Calculate Progress for Stats (assuming max 255/260 usually)
+    const getStatPercent = (val: number, max: number = 255) => Math.min(100, (val / max) * 100);
+
     return (
         <Card className={clsx(
             "relative group overflow-hidden transition-all duration-300",
-            "shadow-sm hover:shadow-md border",
-            PARCHMENT_BG, PARCHMENT_BORDER,
+            "shadow-sm hover:shadow-md border bg-card text-card-foreground",
             className
         )}>
-            {/* "Listed" Badge (Top Right) */}
-            <div className="absolute top-4 right-4 animate-in fade-in zoom-in duration-500">
-                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm border-stone-300 font-serif text-stone-600 shadow-sm">
+             {/* "Listed" Badge (Top Right) */}
+             <div className="absolute top-4 right-4 animate-in fade-in zoom-in duration-500">
+                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm shadow-sm select-none">
                     Listed
                 </Badge>
             </div>
 
-            <CardContent className="p-6 flex flex-col h-full gap-5">
+            <CardContent className="p-6 flex flex-col h-full gap-6">
                 
                 {/* 1. Header: Identity */}
                 <div>
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-2xl font-bold font-serif text-[#2c241b] tracking-tight group-hover:text-accent-gold transition-colors">
-                            {pet.nickname.toUpperCase()}
-                        </h3>
-                        <div className="flex flex-col items-end">
-                            <span className="text-[10px] text-stone-400 font-serif font-bold uppercase tracking-widest">
-                                Pedigree
-                            </span>
-                            <span className="text-sm font-serif font-bold text-stone-600">
-                                (35) 75
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mt-1">
-                         <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-stone-500 bg-stone-100 border-stone-200">
+                     <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors font-serif">
+                        {pet.nickname.toUpperCase()}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1.5">
+                         <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-muted-foreground bg-muted border-border">
                             {pet.school || "Balance"}
                         </Badge>
-                        <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-stone-500 bg-stone-100 border-stone-200">
+                        <Badge variant="secondary" className="rounded-sm px-1.5 py-0 text-[10px] uppercase font-bold text-muted-foreground bg-muted border-border">
                             Mega
                         </Badge>
-                        <span className="text-xs font-serif italic text-stone-400">
+                        <span className="text-xs italic text-muted-foreground">
                             {pet.body}
                         </span>
                     </div>
-
-                    {/* XP Bar (Micro) */}
-                    <div className="mt-3 w-full h-1 bg-stone-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-accent-gold/40 w-[75%]" />
-                    </div>
                 </div>
 
-                {/* 2. Talents Grid */}
-                <div className="flex flex-wrap gap-2">
+                {/* 2. Talents Grid (with Values) */}
+                <div className="grid grid-cols-2 gap-2">
                     {displayTalents.map((talent, i) => {
                         const { icon: Icon, color } = getTalentMetadata(talent);
                         const valueStr = pet.stats ? calculateTalentValue(talent, pet.stats) : null;
                         
                         return (
                             <div key={i} className={clsx(
-                                "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wide border transition-transform hover:scale-105 select-none",
+                                "flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-semibold border transition-colors select-none",
                                 color
-                            )} title={valueStr || talent}>
-                                {valueStr ? (
-                                    <>
-                                        <span>{talent.split(' ')[0]}</span> 
-                                        {/* Truncate long names like "Pain-Giver" -> "Pain" for aesthetics? No, keep logic simple */}
-                                    </>
-                                ) : (
-                                    <span>{talent}</span>
-                                )}
-                                {valueStr && <span className="opacity-70 text-[10px] ml-0.5">{valueStr}</span>}
+                            )}>
+                                <Icon className="w-3.5 h-3.5 opacity-70 shrink-0" />
+                                <div className="flex flex-col leading-none">
+                                    <span className="uppercase tracking-wide text-[10px] opacity-80">{talent}</span>
+                                    {valueStr && <span className="font-bold text-sm">{valueStr}</span>}
+                                </div>
                             </div>
                         );
                     })}
-                    {pet.talents.length > 5 && (
-                        <span className="text-xs font-serif italic text-stone-400 self-center">
-                            +{pet.talents.length - 6} more
-                        </span>
-                    )}
                 </div>
 
-                {/* 3. Footer: Stats & Meta */}
-                <div className="mt-auto pt-4 border-t border-stone-200/50 flex items-center justify-between text-stone-400">
-                    
-                    {/* Item Cards Given */}
-                    <div className="flex -space-x-2">
-                        {itemCards.map((card, i) => (
-                            <div key={i} className="w-6 h-8 rounded bg-gradient-to-br from-stone-200 to-stone-300 border border-stone-400 flex items-center justify-center shadow-sm" title={card}>
-                                <ScrollText className="w-3 h-3 text-stone-600" />
-                            </div>
-                        ))}
+                 {/* 3. Core Stats Block (The "Expansion") */}
+                 {pet.stats && (
+                    <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
+                        <div className="flex justify-between items-center mb-2">
+                             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Core Stats</span>
+                             <span className="text-[10px] text-muted-foreground/50 font-mono">2.0</span>
+                        </div>
+                        <div className="space-y-1.5">
+                            {[
+                                { label: 'STR', val: pet.stats.strength, max: 255 },
+                                { label: 'INT', val: pet.stats.intellect, max: 250 },
+                                { label: 'AGI', val: pet.stats.agility, max: 260 },
+                                { label: 'WIL', val: pet.stats.will, max: 260 },
+                                { label: 'POW', val: pet.stats.power, max: 250 },
+                            ].map((stat) => (
+                                <div key={stat.label} className="flex items-center gap-2 text-[10px]">
+                                    <span className="w-6 font-bold text-muted-foreground">{stat.label}</span>
+                                    <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-primary/60 rounded-full" 
+                                            style={{ width: `${getStatPercent(stat.val, stat.max)}%` }}
+                                        />
+                                    </div>
+                                    <span className="w-8 text-right font-mono text-muted-foreground">{stat.val}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                 )}
 
+                {/* 4. Footer: Item Cards */}
+                <div className="mt-auto border-t pt-3 flex items-center justify-between text-muted-foreground text-xs">
+                    <div className="flex items-center gap-1.5">
+                       <span className="uppercase tracking-widest text-[10px] font-bold opacity-60">Gives</span>
+                        <div className="flex -space-x-1">
+                            {itemCards.map((card, i) => (
+                                <div key={i} className="px-1.5 py-0.5 bg-background border rounded text-[10px] shadow-sm z-10 hover:z-20" title={card}>
+                                    {card}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
                     {/* Socket */}
                     <div className="flex items-center gap-2" title="Jewel Socket">
                          <div className={clsx(
-                             "w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                             isSocketed ? "bg-accent-gold/20 border-accent-gold text-accent-gold" : "border-stone-300 border-dashed text-stone-300"
+                             "w-5 h-5 rounded-full border-2 flex items-center justify-center",
+                             isSocketed ? "bg-accent-gold/20 border-accent-gold text-accent-gold" : "border-border border-dashed text-muted-foreground"
                          )}>
-                             <Gem className="w-3 h-3" />
+                             <Gem className="w-2.5 h-2.5" />
                          </div>
                     </div>
                 </div>
