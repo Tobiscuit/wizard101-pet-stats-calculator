@@ -132,3 +132,75 @@ export async function createReply(input: CreateReplyInput) {
         return { success: false, error: "Failed to reply." };
     }
 }
+
+export type ToggleReactionInput = {
+    threadId: string;
+    postId: string; // If same as threadId, it's the OP (Future proof)
+    emoji: string;
+};
+
+export async function toggleReaction(input: ToggleReactionInput) {
+    const session = await auth();
+    if (!session?.user?.id) return { success: false, error: "Unauthorized" };
+
+    const { threadId, postId, emoji } = input;
+    const db = getAdminFirestore();
+    const userId = session.user.id;
+
+    try {
+        await db.runTransaction(async (t) => {
+            // Path: threads/{threadId}/posts/{postId}
+            // Subcollection: .../posts/{postId}/likes/{userId}
+            
+            const postRef = db.collection('threads').doc(threadId).collection('posts').doc(postId);
+            const likeRef = postRef.collection('likes').doc(userId);
+
+            const likeSnap = await t.get(likeRef);
+            const postSnap = await t.get(postRef);
+
+            if (!postSnap.exists) throw new Error("Post not found");
+            
+            const currentReactions = postSnap.data()?.reactions || {};
+            const currentCount = currentReactions[emoji] || 0;
+
+            if (likeSnap.exists) {
+                // User already liked? Check if it's the same emoji.
+                const existingEmoji = likeSnap.data()?.emoji;
+                
+                if (existingEmoji === emoji) {
+                     // Toggle OFF (Remove like)
+                     t.delete(likeRef);
+                     t.update(postRef, {
+                        [`reactions.${emoji}`]: FieldValue.increment(-1)
+                     });
+                } else {
+                    // Switch Vote (e.g. Heart -> Fire)
+                    // 1. Remove old
+                    t.delete(likeRef);
+                    t.update(postRef, {
+                        [`reactions.${existingEmoji}`]: FieldValue.increment(-1)
+                    });
+                    
+                    // 2. Add new
+                    t.set(likeRef, { userId, emoji, createdAt: FieldValue.serverTimestamp() });
+                    t.update(postRef, {
+                        [`reactions.${emoji}`]: FieldValue.increment(1)
+                    });
+                }
+            } else {
+                // Toggle ON (Add like)
+                t.set(likeRef, { userId, emoji, createdAt: FieldValue.serverTimestamp() });
+                t.update(postRef, {
+                    [`reactions.${emoji}`]: FieldValue.increment(1)
+                });
+            }
+        });
+
+        revalidatePath(`/olde-town/thread/${threadId}`);
+        return { success: true };
+
+    } catch (error) {
+        console.error("Error toggling reaction:", error);
+        return { success: false, error: "Failed to react." };
+    }
+}

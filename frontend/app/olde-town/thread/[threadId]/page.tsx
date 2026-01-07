@@ -30,6 +30,7 @@ type Props = {
 };
 
 import { ReplyForm } from '@/components/forum/ReplyForm';
+import { ReactionButtons } from '@/components/forum/ReactionButtons';
 
 // ... (existing imports)
 
@@ -85,7 +86,36 @@ export default async function ThreadPage({ params }: Props) {
              {/* ... Header ... */}
              
              {/* ... OP Content ... */}
-             
+             <Card className="min-h-[200px] shadow-sm">
+                        <CardContent className="p-6 space-y-6">
+                            {/* Markdown Body */}
+                            <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
+                                <ReactMarkdown>
+                                    {thread.content}
+                                </ReactMarkdown>
+                            </div>
+
+                            {/* Tags */}
+                            {thread.tags && thread.tags.length > 0 && (
+                                <div className="flex gap-2 pt-4">
+                                    {thread.tags.map(tag => (
+                                        <Badge key={tag} variant="outline" className="text-xs text-muted-foreground">
+                                            #{tag}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Reactions (OP) */}
+                            <div className="pt-2 border-t mt-4 flex justify-between items-center">
+                                <ReactionButtons 
+                                    threadId={thread.id} 
+                                    postId={thread.id} // OP ID is Thread ID
+                                    initialReactions={thread.reactions} 
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
              {/* (Keep existing render logic for Header and OP) */}
              
              <Separator className="my-8" />
@@ -118,9 +148,18 @@ export default async function ThreadPage({ params }: Props) {
                                     </div>
                                     
                                     {/* Content Side */}
-                                    <div className="flex-1 p-6">
+                                    <div className="flex-1 p-6 flex flex-col justify-between">
                                         <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
                                             <ReactMarkdown>{post.content}</ReactMarkdown>
+                                        </div>
+                                        
+                                        {/* Reactions (Reply) */}
+                                        <div className="mt-4 pt-4 border-t">
+                                            <ReactionButtons 
+                                                threadId={thread.id} 
+                                                postId={post.id} 
+                                                initialReactions={post.reactions} 
+                                            />
                                         </div>
                                     </div>
                                 </div>

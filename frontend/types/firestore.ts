@@ -216,6 +216,11 @@ export type ForumThread = {
     isPinned: boolean;
     isLocked: boolean;
     
+    // Likes/Reactions
+    reactions?: {
+        [emoji: string]: number; 
+    };
+
     createdAt: Timestamp;
     updatedAt: Timestamp;
 };
