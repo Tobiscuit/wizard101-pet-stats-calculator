@@ -4,7 +4,7 @@ import { Spellbook } from '@/components/Spellbook';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Share2 } from 'lucide-react';
-import { PetDetailsModal } from '@/components/PetDetailsModal'; // We'll reuse the modal content or similar layout
+
 
 // We can reuse the card layout or just a simple detail view
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
