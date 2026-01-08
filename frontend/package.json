@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "echo ===NEXTJS_BUILD_START=== && next build; exit_code=$?; echo ===NEXTJS_BUILD_END=== && exit $exit_code",
+    "build:check": "next build",
     "start": "next start",
     "lint": "eslint"
   },
