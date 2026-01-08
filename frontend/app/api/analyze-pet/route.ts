@@ -80,7 +80,6 @@ SEARCH PROTOCOL:
 
 Today's Date: ${new Date().toLocaleDateString()}.
             `,
-            tools: [{ googleSearch: {} }],
             generationConfig: {
                 responseMimeType: "application/json",
                 responseSchema: schema
