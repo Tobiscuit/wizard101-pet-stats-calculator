@@ -16,6 +16,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    runtime: "nodejs",
     matcher: ["/my-pets/:path*", "/profile/:path*", "/guilds/:path*"],
 };
