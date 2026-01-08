@@ -48,13 +48,13 @@ export default function MyPetsPage() {
                 } finally {
                     setLoading(false);
                 }
-            } else if (status === 'unauthenticated') {
+            } else if (!isPending && !session) {
                 setLoading(false);
             }
         }
 
         fetchData();
-    }, [session, status]);
+    }, [session, isPending]);
 
     const handleOpenListingConfig = (pet: any) => {
         setListingConfigPet(pet);
