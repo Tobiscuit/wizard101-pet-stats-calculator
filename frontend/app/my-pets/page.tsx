@@ -12,6 +12,7 @@ import { getPets, listPetInMarketplace, unlistPetFromMarketplace, deletePet, get
 
 
 import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
+import { calculateTalentValue } from '@/lib/talent-formulas';
 
 export default function MyPetsPage() {
     const { data: session, isPending } = useSession();
@@ -210,11 +211,16 @@ export default function MyPetsPage() {
                                 </div>
 
                                 <div className="flex flex-wrap gap-1.5 mt-2">
-                                    {pet.talents?.slice(0, 3).map((talent: string, i: number) => (
-                                        <span key={i} className="text-xs px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded">
-                                            {talent}
-                                        </span>
-                                    ))}
+                                    {pet.talents?.slice(0, 3).map((talent: string, i: number) => {
+                                        const stats = pet.stats || pet.currentStats;
+                                        const val = stats ? calculateTalentValue(talent, stats) : null;
+                                        return (
+                                            <span key={i} className="text-xs px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded flex items-center gap-1">
+                                                <span className="font-semibold uppercase">{talent}</span>
+                                                {val && <span className="font-mono opacity-80">({val})</span>}
+                                            </span>
+                                        );
+                                    })}
                                     {pet.talents?.length > 3 && (
                                         <span className="text-xs px-2 py-1 text-muted-foreground italic">
                                             +{pet.talents.length - 3} more
