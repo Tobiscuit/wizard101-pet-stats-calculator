@@ -15,5 +15,9 @@ export const auth = betterAuth({
         }, 
     },
     // Trust Host for Coolify Proxy
-    trustedOrigins: [process.env.NEXTAUTH_URL || "http://localhost:3000"],
+    trustedOrigins: [
+        process.env.BETTER_AUTH_URL, 
+        process.env.NEXT_PUBLIC_APP_URL, 
+        "http://localhost:3000"
+    ].filter(Boolean) as string[],
 });
