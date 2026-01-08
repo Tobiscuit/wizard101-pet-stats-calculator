@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Pet } from '@/types/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";

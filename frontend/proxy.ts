@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const sessionCookie = getSessionCookie(request);
     
     // Protected Routes
@@ -16,5 +16,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+    runtime: "nodejs",
     matcher: ["/my-pets/:path*", "/profile/:path*", "/guilds/:path*"],
 };

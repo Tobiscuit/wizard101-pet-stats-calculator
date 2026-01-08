@@ -1,4 +1,3 @@
-'use native';
 'use client';
 
 import { useEffect } from 'react';
