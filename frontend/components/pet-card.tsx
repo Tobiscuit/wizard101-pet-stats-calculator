@@ -1,3 +1,4 @@
+import React from 'react';
 import { Pet } from '@/types/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,12 +32,16 @@ function getTalentMetadata(name: string) {
 }
 
 export function PetCard({ pet, className }: Props) {
+    const [open, setOpen] = React.useState(false);
+
     // Keep the "List View" simple and clean
     const displayTalents = pet.talents.slice(0, 4); 
 
     return (
-        <PetDetailDialog pet={pet}>
-            <Card className={clsx(
+        <>
+            <Card 
+                onClick={() => setOpen(true)}
+                className={clsx(
                 "hover:border-primary/50 transition-all cursor-pointer group h-full flex flex-col hover:shadow-md", 
                 className
             )}>
@@ -48,10 +53,10 @@ export function PetCard({ pet, className }: Props) {
                             </CardTitle>
                             <div className="flex gap-2">
                                 <Badge variant="secondary" className="text-[10px] uppercase font-bold">{pet.school}</Badge>
-                                <Badge variant="outline" className="text-[10px] uppercase text-muted-foreground">Mega</Badge>
+                                {/* TODO: Pull usage/age from pet data if available */}
                             </div>
                         </div>
-                        <Badge variant="outline" className="text-xs">Listed</Badge>
+                        {pet.isLendable && <Badge variant="outline" className="text-xs">Listed</Badge>}
                     </div>
                 </CardHeader>
                 
@@ -74,6 +79,12 @@ export function PetCard({ pet, className }: Props) {
                     </div>
                 </CardContent>
             </Card>
-        </PetDetailDialog>
+
+            <PetDetailDialog 
+                pet={pet}
+                open={open}
+                onClose={() => setOpen(false)}
+            />
+        </>
     );
 }
