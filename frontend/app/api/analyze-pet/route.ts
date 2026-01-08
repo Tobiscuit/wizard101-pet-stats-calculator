@@ -128,7 +128,7 @@ Return JSON matching schema. Confidence 0-100 based on clarity.`;
         ];
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
+            model: "gemini-3-flash-preview",
             contents: contents,
             config: {
                 tools: [{ googleSearch: {} }],
