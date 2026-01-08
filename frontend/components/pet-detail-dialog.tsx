@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Pet } from '@/types/firestore';
 import { calculateTalentValue, calculateAllPotentials } from '@/lib/talent-formulas';
