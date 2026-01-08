@@ -1,10 +1,16 @@
 'use server';
 
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { ForumThread, ForumCategory } from "@/types/firestore";
 import { FieldValue } from "firebase-admin/firestore";
 import { revalidatePath } from "next/cache";
+
+// Helper function for server-side session
+async function getSession() {
+    return await auth.api.getSession({ headers: await headers() });
+}
 
 export type CreateThreadInput = {
     title: string;
@@ -21,7 +27,7 @@ export type CreateThreadInput = {
 };
 
 export async function createThread(input: CreateThreadInput) {
-    const session = await auth();
+    const session = await getSession();
     
     if (!session?.user?.id) {
         return { success: false, error: "You must be logged in to post." };
@@ -89,7 +95,7 @@ export type CreateReplyInput = {
 };
 
 export async function createReply(input: CreateReplyInput) {
-    const session = await auth();
+    const session = await getSession();
     if (!session?.user?.id) return { success: false, error: "Unauthorized" };
 
     const { threadId, content, authorWizardId, authorWizardName } = input;
@@ -140,7 +146,7 @@ export type ToggleReactionInput = {
 };
 
 export async function toggleReaction(input: ToggleReactionInput) {
-    const session = await auth();
+    const session = await getSession();
     if (!session?.user?.id) return { success: false, error: "Unauthorized" };
 
     const { threadId, postId, emoji } = input;

@@ -1,8 +1,9 @@
 import { getPets } from '@/app/actions';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 
 export default async function DebugPetsPage() {
-    const session = await auth();
+    const session = await auth.api.getSession({ headers: await headers() });
     const result = await getPets();
 
     return (

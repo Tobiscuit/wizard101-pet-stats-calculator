@@ -1,12 +1,18 @@
 'use server';
 
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { revalidatePath } from "next/cache";
 import { calculateAllPotentials, applyJewelBonus } from "@/lib/talent-formulas";
 
+// Helper function for server-side session
+async function getSession() {
+    return await auth.api.getSession({ headers: await headers() });
+}
+
 export async function savePet(petData: any) {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user?.id) {
         throw new Error("Unauthorized: You must be logged in to save a pet.");
@@ -41,7 +47,7 @@ export async function savePet(petData: any) {
 }
 
 export async function getPets() {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user?.id) {
         return { success: false, error: "Unauthorized" };
@@ -75,7 +81,7 @@ export async function getPets() {
 }
 
 export async function listPetInMarketplace(petId: string, listingData: any, discordUsername?: string) {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user?.id) {
         return { success: false, error: "Unauthorized" };
@@ -213,7 +219,7 @@ export async function getListing(listingId: string) {
 }
 
 export async function unlistPetFromMarketplace(petId: string) {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user?.id) {
         return { success: false, error: "Unauthorized" };
@@ -248,7 +254,7 @@ export async function unlistPetFromMarketplace(petId: string) {
 }
 
 export async function deletePet(petId: string) {
-    const session = await auth();
+    const session = await getSession();
 
     if (!session?.user?.id) {
         return { success: false, error: "Unauthorized" };
@@ -280,7 +286,7 @@ export async function deletePet(petId: string) {
 }
 
 export async function updateLastSeen() {
-    const session = await auth();
+    const session = await getSession();
     if (!session?.user?.id) return;
 
     try {
@@ -297,7 +303,7 @@ export async function updateLastSeen() {
 }
 
 export async function getUserProfile(): Promise<{ success: boolean; profile?: any; error?: string }> {
-    const session = await auth();
+    const session = await getSession();
     if (!session?.user?.id) return { success: false, error: "Unauthorized" };
 
     try {
