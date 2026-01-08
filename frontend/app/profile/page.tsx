@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useProfile } from '@/hooks/use-profile';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -187,7 +187,7 @@ function AnalyticsCard({ analytics }: { analytics: any }) {
 
 export default function ProfilePage() {
     const { profile, wizards, pets, loading, error } = useProfile();
-    const { status } = useSession();
+    const { isPending } = useSession();
 
     // Loading State
     if (loading) {
@@ -220,7 +220,7 @@ export default function ProfilePage() {
                  <p className="text-muted-foreground max-w-md">
                      Create your wizard profile, track your pets, and build your reputation in the community.
                  </p>
-                 <Button onClick={() => signIn()} size="lg" className="bg-accent-gold text-primary-foreground hover:bg-accent-gold/90">
+                 <Button onClick={() => signIn.social({ provider: "discord" })} size="lg" className="bg-accent-gold text-primary-foreground hover:bg-accent-gold/90">
                      <LogIn className="w-4 h-4 mr-2" />
                      Sign In / Register
                  </Button>

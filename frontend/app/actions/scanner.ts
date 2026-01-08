@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
@@ -46,8 +46,7 @@ export async function scanWizardImage(formData: FormData) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `
       You are an expert Wizard101 analyst. Analyze this screenshot of a character's stat sheet or inventory.
@@ -75,21 +74,28 @@ export async function scanWizardImage(formData: FormData) {
       }
     `;
 
-    const result = await model.generateContent([
-      prompt,
+    const contents = [
+      { text: prompt },
       {
         inlineData: {
-          data: base64Image,
           mimeType: file.type,
-        },
-      },
-    ]);
+          data: base64Image
+        }
+      }
+    ];
 
-    const response = await result.response;
-    const text = response.text();
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: contents,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
+
+    const text = response.text;
     
     // Clean code blocks if present
-    const cleanJson = text.replace(/```json|```/g, "").trim();
+    const cleanJson = (text || "{}").replace(/```json|```/g, "").trim();
     const data = JSON.parse(cleanJson);
 
     return { success: true, data };

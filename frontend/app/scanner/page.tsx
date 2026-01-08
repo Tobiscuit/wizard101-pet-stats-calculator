@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Upload, Sparkles, AlertCircle, ScanLine, Wand2, Loader2 } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth-client"
 import { motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"

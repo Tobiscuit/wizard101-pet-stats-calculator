@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { scanMercenaryScreenshots, ScanResult } from "@/services/scanner-service";
 import { saveVerifiedStats, toggleMercenaryListing } from "@/services/verification-service";
 import { useProfile } from "@/hooks/use-profile";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, CheckCircle2, Shield, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

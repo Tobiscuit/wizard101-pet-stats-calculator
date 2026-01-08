@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { getListings, createListing, createOrder } from "@/services/marketplace-service";
 import { MarketplaceListing } from "@/types/firestore";
 import { Button } from "@/components/ui/button";

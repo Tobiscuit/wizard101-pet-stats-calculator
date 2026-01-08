@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/auth-client';
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { MagicCard } from "@/components/magicui/magic-card"
 import { PetDetailDialog } from '@/components/pet-detail-dialog';
@@ -14,7 +14,7 @@ import { getPets, listPetInMarketplace, unlistPetFromMarketplace, deletePet, get
 import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
 
 export default function MyPetsPage() {
-    const { data: session, status } = useSession();
+    const { data: session, isPending } = useSession();
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedPet, setSelectedPet] = useState<any>(null);

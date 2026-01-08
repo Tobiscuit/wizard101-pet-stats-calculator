@@ -22,7 +22,7 @@ const BASE_CAPS: Stats = {
 };
 
 import { PetScanner } from './PetScanner';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn } from '@/lib/auth-client';
 import { savePet } from '@/app/actions';
 import { calculateAllPotentials } from '@/lib/talent-formulas';
 
@@ -125,7 +125,7 @@ export function Calculator() {
 
     const handleSavePet = async () => {
         if (!session?.user?.id) {
-            signIn(); // Redirect to login if not authenticated
+            signIn.social({ provider: "discord" }); // Redirect to login if not authenticated
             return;
         }
 

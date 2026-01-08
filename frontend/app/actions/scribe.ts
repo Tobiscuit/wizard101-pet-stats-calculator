@@ -1,6 +1,6 @@
 "use server";
 
-import { GoogleGenerativeAI, Content } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
 
 // Keys
@@ -39,12 +39,14 @@ async function retrieveContext(query: string) {
     
     try {
         const sb = createClient(sbUrl, sbKey);
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const embedModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+        const ai = new GoogleGenAI({ apiKey });
         
-        // 1. Embed Query
-        const emRes = await embedModel.embedContent(query);
-        const queryVector = emRes.embedding.values;
+        // 1. Embed Query using the new SDK
+        const embeddingResult = await ai.models.embedContent({
+            model: "text-embedding-004",
+            contents: query
+        });
+        const queryVector = embeddingResult.embeddings?.[0]?.values || [];
 
         // 2. Search Supabase (RPC match_documents)
         console.log(`[Gamma] Searching Supabase for: "${query}" (Threshold: 0.4)`);
@@ -88,7 +90,7 @@ export async function chatWithGamma(history: ChatMessage[]) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const ai = new GoogleGenAI({ apiKey });
     
     // 1. Get User's Last Message
     const lastUserMsg = history[history.length - 1];
@@ -103,45 +105,46 @@ export async function chatWithGamma(history: ChatMessage[]) {
     // 3. Construct System Prompt
     const finalSystemPrompt = BASE_SYSTEM_INSTRUCTION + (isHibernate ? "\n(Note: Low Power Mode active)" : "") + ragContext;
 
-    // 4. Init Model
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3-flash-preview", 
-      systemInstruction: finalSystemPrompt + `
-      
-      IMPORTANT: You must output a JSON object in this format:
-      {
-        "original_query": "The user's question",
-        "reasoning": "Your internal Chain of Thought",
-        "content": "The final response to the user (Keep this CONCISE)",
-        "source_used": "Tool or Document used"
-      }
-      Do NOT output Markdown fencing around the JSON. Just the raw JSON object.
-      `,
-      // @ts-expect-error - googleSearch is available in v1beta/experimental but types might lag
-      tools: [{ googleSearch: {} }], 
-      generationConfig: {
-        responseMimeType: "application/json"
-      }
-    });
-
-    // 5. Convert History
+    // 4. Convert History
     // Gemini Rule: History must start with 'user'.
     let validHistory = history.slice(0, -1);
     while (validHistory.length > 0 && validHistory[0].role === "assistant") {
         validHistory.shift();
     }
 
-    const chatHistory: Content[] = validHistory.map((msg) => ({
+    const chatContents = validHistory.map((msg) => ({
         role: msg.role === "assistant" ? "model" : "user",
         parts: [{ text: msg.content }],
     }));
 
-    const chat = model.startChat({
-        history: chatHistory,
+    // Add the current user message
+    chatContents.push({
+        role: "user",
+        parts: [{ text: userQuery }]
     });
 
-    const result = await chat.sendMessage(userQuery);
-    const responseText = result.response.text();
+    // 5. Generate with new SDK
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: chatContents,
+      config: {
+        systemInstruction: finalSystemPrompt + `
+        
+        IMPORTANT: You must output a JSON object in this format:
+        {
+          "original_query": "The user's question",
+          "reasoning": "Your internal Chain of Thought",
+          "content": "The final response to the user (Keep this CONCISE)",
+          "source_used": "Tool or Document used"
+        }
+        Do NOT output Markdown fencing around the JSON. Just the raw JSON object.
+        `,
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json"
+      }
+    });
+
+    const responseText = response.text || "{}";
     
     // Parse JSON
     try {
