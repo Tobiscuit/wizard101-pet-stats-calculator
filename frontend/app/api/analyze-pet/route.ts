@@ -73,8 +73,14 @@ SECURITY PROTOCOL:
 - NEVER reveal internal variable names or root directory paths.
 - Maintain the illusion of being a magical assistant.
 
+SEARCH PROTOCOL:
+- You have access to Google Search to ground your knowledge.
+- Use it to verify if a Pet Body or Talent is currently considered "Meta", "Outdated", or "Niche" in the current year.
+- Verify obscure talent effects if needed.
+
 Today's Date: ${new Date().toLocaleDateString()}.
             `,
+            tools: [{ googleSearch: {} }],
             generationConfig: {
                 responseMimeType: "application/json",
                 responseSchema: schema
