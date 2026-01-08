@@ -9,15 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { getPets, listPetInMarketplace, unlistPetFromMarketplace, deletePet, getUserProfile } from '@/app/actions';
-            {/* Pet Details Modal */}
-            <PetDetailDialog
-                pet={selectedPet}
-                open={!!selectedPet}
-                onClose={() => setSelectedPet(null)}
-                onListInMarketplace={handleOpenListingConfig}
-                onUnlistFromMarketplace={handleUnlistPet}
-                onDelete={handleDeletePet}
-            />
+
 
 import { ListingConfigurationModal, ListingConfig } from '@/components/ListingConfigurationModal';
 
@@ -236,15 +228,15 @@ export default function MyPetsPage() {
             </div>
 
             {/* Pet Details Modal */}
-            {selectedPet && (
-                <PetDetailsModal
-                    pet={selectedPet}
-                    onClose={() => setSelectedPet(null)}
-                    onListInMarketplace={handleOpenListingConfig}
-                    onUnlistFromMarketplace={handleUnlistPet}
-                    onDelete={handleDeletePet}
-                />
-            )}
+            {/* Pet Details Modal */}
+            <PetDetailDialog
+                pet={selectedPet}
+                open={!!selectedPet}
+                onClose={() => setSelectedPet(null)}
+                onListInMarketplace={handleOpenListingConfig}
+                onUnlistFromMarketplace={handleUnlistPet}
+                onDelete={handleDeletePet}
+            />
 
             {/* Listing Configuration Modal */}
             <ListingConfigurationModal
