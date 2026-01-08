@@ -21,6 +21,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://commons.jrcodex.dev'),
   title: "The Commons | Wizard101 Community Hub",
   description: "The ultimate tool for Wizard101 players. Calculate pet talent stats, simulate jewel sockets, and trade pets with the dedicated community. Optimize your build today.",
   openGraph: {
