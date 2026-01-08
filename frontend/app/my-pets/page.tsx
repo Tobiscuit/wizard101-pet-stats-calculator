@@ -185,50 +185,79 @@ export default function MyPetsPage() {
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {pets.map((pet) => (
-                            <MagicCard 
-                                key={pet.id}
-                                onClick={() => setSelectedPet(pet)}
-                                className="cursor-pointer border-accent-gold/20 hover:border-accent-gold/50 transition-all duration-500 flex flex-col gap-4 p-6 hover:-translate-y-1 hover:shadow-lg relative overflow-hidden" 
-                                gradientColor="#FFD700" 
-                                gradientOpacity={0.1}
-                            >
-                                {pet.listedInMarketplace && (
-                                    <div className="absolute top-2 right-2 px-2 py-1 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 text-xs font-bold rounded shadow-sm z-10">
-                                        Listed
-                                    </div>
-                                )}
-
-                                <div>
-                                    <h3 className="font-serif font-bold text-xl text-accent-gold mb-1 group-hover:text-foreground transition-colors tracking-wide">
-                                        {pet.petNickname || pet.petType}
-                                    </h3>
-                                    <div className="flex gap-2 text-sm text-muted-foreground">
-                                        <span className="px-2 py-0.5 bg-muted rounded border">{pet.petSchool}</span>
-                                        <span className="px-2 py-0.5 bg-muted rounded border">{pet.petAge}</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-wrap gap-1.5 mt-2">
-                                    {pet.talents?.slice(0, 3).map((talent: string, i: number) => {
-                                        const stats = pet.stats || pet.currentStats;
-                                        const val = stats ? calculateTalentValue(talent, stats) : null;
-                                        return (
-                                            <span key={i} className="text-xs px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded flex items-center gap-1">
-                                                <span className="font-semibold uppercase">{talent}</span>
-                                                {val && <span className="font-mono opacity-80">({val})</span>}
-                                            </span>
-                                        );
-                                    })}
-                                    {pet.talents?.length > 3 && (
-                                        <span className="text-xs px-2 py-1 text-muted-foreground italic">
-                                            +{pet.talents.length - 3} more
-                                        </span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {pets.map((pet) => {
+                             const stats = pet.stats || pet.currentStats || { strength: 0, intellect: 0, agility: 0, will: 0, power: 0 };
+                             return (
+                                <MagicCard 
+                                    key={pet.id}
+                                    onClick={() => setSelectedPet(pet)}
+                                    className="cursor-pointer border-accent-gold/20 hover:border-accent-gold/50 transition-all duration-500 flex flex-col justify-between p-0 hover:-translate-y-1 hover:shadow-lg relative overflow-hidden h-full group" 
+                                    gradientColor="#FFD700" 
+                                    gradientOpacity={0.1}
+                                >
+                                    {pet.listedInMarketplace && (
+                                        <div className="absolute top-2 right-2 px-2 py-0.5 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 text-[10px] font-bold rounded shadow-sm z-10 uppercase tracking-widest">
+                                            Listed
+                                        </div>
                                     )}
-                                </div>
-                            </MagicCard>
-                        ))}
+
+                                    {/* Card Header area */}
+                                    <div className="p-5 pb-3">
+                                        <h3 className="font-serif font-bold text-lg text-accent-gold mb-1 group-hover:text-foreground transition-colors tracking-wide leading-tight line-clamp-2 min-h-[3.5rem]">
+                                            {pet.petNickname || pet.petType}
+                                        </h3>
+                                        <div className="flex gap-2 text-xs text-muted-foreground mt-2">
+                                            <span className="px-2 py-0.5 bg-muted rounded border border-white/5">{pet.petSchool}</span>
+                                            <span className="px-2 py-0.5 bg-muted rounded border border-white/5">{pet.petAge}</span>
+                                        </div>
+                                    
+                                        {/* Base Stats Mini-Grid */}
+                                        <div className="grid grid-cols-5 gap-1 mt-4 text-center pb-2 border-b border-white/5">
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold">Str</span>
+                                                <span className="text-xs font-mono">{stats.strength}</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold">Int</span>
+                                                <span className="text-xs font-mono">{stats.intellect}</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold">Agi</span>
+                                                <span className="text-xs font-mono">{stats.agility}</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold">Will</span>
+                                                <span className="text-xs font-mono">{stats.will}</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] text-muted-foreground uppercase font-bold">Pow</span>
+                                                <span className="text-xs font-mono">{stats.power}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Talents List (Scrollable if absolutely massive, but usually fits) */}
+                                    <div className="flex-1 p-5 pt-0 flex flex-col gap-2">
+                                        {pet.talents?.map((talent: string, i: number) => {
+                                            const val = calculateTalentValue(talent, stats);
+                                            return (
+                                                <div key={i} className="flex justify-between items-center text-xs px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-md transition-colors">
+                                                    <span className="font-semibold uppercase truncate text-[10px] tracking-wide">{talent}</span>
+                                                    {val && <span className="font-mono text-accent-gold/90 text-[10px] whitespace-nowrap ml-1">{val}</span>}
+                                                </div>
+                                            );
+                                        })}
+                                        {(!pet.talents || pet.talents.length === 0) && (
+                                            <span className="text-xs text-muted-foreground italic p-2 text-center opacity-50">No talents known</span>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Bottom aesthetic strip */}
+                                    <div className="h-1 w-full bg-gradient-to-r from-transparent via-accent-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </MagicCard>
+                             );
+                        })}
                     </div>
                 )}
             </div>
