@@ -73,7 +73,7 @@ export function StatInputCell({ label, value, max, onChange, className }: StatIn
             )}
 
             <div className="flex justify-between items-baseline select-none">
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
+                <span className="text-xs font-bold text-muted-foreground uppercase">{label}</span>
                 {/* Max Label */}
                 <span className="text-[10px] text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity">
                     Max: {max}
