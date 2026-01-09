@@ -369,13 +369,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 
                 {session ? (
                     <>
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            <Sparkles className="mr-2" />
-                            Upgrade to Premium
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+
                         <DropdownMenuGroup>
                           <DropdownMenuItem>
                             <Settings2 className="mr-2" />
