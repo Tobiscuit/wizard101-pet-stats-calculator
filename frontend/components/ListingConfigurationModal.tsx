@@ -1,10 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Gem, DollarSign, MessageCircle } from 'lucide-react';
+import { Gem, DollarSign, MessageCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { calculateAllPotentials } from '@/lib/talent-formulas';
 import { MagicalButton } from './MagicalButton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type ListingConfigurationModalProps = {
     pet: any;
@@ -70,101 +74,102 @@ export function ListingConfigurationModal({ pet, isOpen, onClose, onConfirm, sav
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-[#1a1a2e] border-2 border-accent-gold rounded-xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-300">
-                <div className="p-6 border-b border-accent-gold/20 flex justify-between items-center">
-                    <h2 className="text-2xl font-serif font-bold text-accent-gold">List in Kiosk</h2>
-                    <button onClick={onClose} className="text-white/50 hover:text-white">
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="sm:max-w-md w-full border-accent-gold/20 bg-background/95 backdrop-blur-xl">
+                 <DialogHeader>
+                    <DialogTitle className="text-2xl font-serif font-bold text-accent-gold flex items-center gap-2">
+                        List in Kiosk
+                    </DialogTitle>
+                </DialogHeader>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6 py-4">
                     {/* Price */}
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-white/90 flex items-center gap-2">
-                            <DollarSign className="w-4 h-4 text-green-400" />
+                        <Label className="font-bold flex items-center gap-2">
+                            <DollarSign className="w-4 h-4 text-green-500" />
                             Asking Price
-                        </label>
+                        </Label>
                         <div className="flex gap-2">
-                            <input
+                            <Input
                                 type="number"
                                 value={priceAmount}
                                 onChange={(e) => setPriceAmount(Number(e.target.value))}
-                                className="w-24 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:border-accent-gold outline-none"
+                                className="w-24 bg-muted/50 border-input text-foreground focus:border-accent-gold"
                                 min="0"
                             />
-                            <select
-                                value={priceType}
-                                onChange={(e) => setPriceType(e.target.value)}
-                                className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:border-accent-gold outline-none"
-                            >
-                                <option value="Empowers">Empowers</option>
-                                <option value="Packs">Packs</option>
-                                <option value="Gifting">Gifting</option>
-                                <option value="Free">Free (Lending)</option>
-                            </select>
+                            <Select value={priceType} onValueChange={setPriceType}>
+                                <SelectTrigger className="flex-1 bg-muted/50 border-input text-foreground focus:ring-accent-gold">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Empowers">Empowers</SelectItem>
+                                    <SelectItem value="Packs">Packs</SelectItem>
+                                    <SelectItem value="Gifting">Gifting</SelectItem>
+                                    <SelectItem value="Free">Free (Lending)</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
                     {/* Jewel Socketing */}
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-white/90 flex items-center gap-2">
-                            <Gem className="w-4 h-4 text-purple-400" />
+                        <Label className="font-bold flex items-center gap-2">
+                            <Gem className="w-4 h-4 text-purple-500" />
                             Socketed Jewel
-                        </label>
-                        <select
-                            value={selectedJewel}
-                            onChange={(e) => setSelectedJewel(e.target.value)}
-                            className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:border-accent-gold outline-none"
-                        >
-                            {JEWELS.map(j => (
-                                <option key={j.id} value={j.id}>
-                                    {j.name} {j.bonus ? `(+${j.bonus.amount} ${j.bonus.stat})` : ''}
-                                </option>
-                            ))}
-                        </select>
+                        </Label>
+                        <Select value={selectedJewel} onValueChange={setSelectedJewel}>
+                             <SelectTrigger className="w-full bg-muted/50 border-input text-foreground focus:ring-accent-gold">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {JEWELS.map(j => (
+                                    <SelectItem key={j.id} value={j.id}>
+                                        {j.name} {j.bonus ? `(+${j.bonus.amount} ${j.bonus.stat})` : ''}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
 
                         {/* Stat Preview */}
                         {previewStats && selectedJewel !== 'none' && (
-                            <div className="mt-2 p-3 bg-white/5 rounded border border-white/10 text-sm">
-                                <div className="flex justify-between text-white/80">
+                            <div className="mt-2 p-3 bg-muted/30 rounded border border-border text-sm">
+                                <div className="flex justify-between text-muted-foreground">
                                     <span>New Damage (Dealer):</span>
-                                    <span className="text-green-400 font-mono font-bold">{previewStats.damage.dealer}%</span>
+                                    <span className="text-green-500 font-mono font-bold">{previewStats.damage.dealer}%</span>
                                 </div>
-                                <div className="flex justify-between text-white/80">
+                                <div className="flex justify-between text-muted-foreground">
                                     <span>New Resist (Proof):</span>
-                                    <span className="text-blue-400 font-mono font-bold">{previewStats.resist.proof}%</span>
+                                    <span className="text-blue-500 font-mono font-bold">{previewStats.resist.proof}%</span>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Discord Contact - only show if user doesn't have Discord OAuth */}
+                    {/* Discord Contact */}
                     {!hasDiscordOAuth && (
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-white/90 flex items-center gap-2">
-                                <MessageCircle className="w-4 h-4 text-blue-400" />
+                            <Label className="font-bold flex items-center gap-2">
+                                <MessageCircle className="w-4 h-4 text-blue-500" />
                                 Discord Username
-                            </label>
-                            <input
+                            </Label>
+                            <Input
                                 type="text"
                                 value={discordUsername}
                                 onChange={(e) => setDiscordUsername(e.target.value)}
                                 placeholder="username"
-                                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white focus:border-accent-gold outline-none"
+                                className="w-full bg-muted/50 border-input text-foreground focus:border-accent-gold"
                                 required={!hasDiscordOAuth}
                             />
-                            <p className="text-xs text-white/50">Required for buyers to contact you.</p>
+                            <p className="text-xs text-muted-foreground">Required for buyers to contact you.</p>
                         </div>
                     )}
 
                     {hasDiscordOAuth && (
-                        <div className="p-3 bg-green-900/20 border border-green-500/30 rounded text-sm flex items-center gap-2">
-                            <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded text-sm flex items-center gap-2">
+                            <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-green-200">Discord connected - buyers can message you directly!</span>
+                            <span className="text-green-700 dark:text-green-300">Discord connected - buyers can message you directly!</span>
                         </div>
                     )}
 
@@ -176,7 +181,7 @@ export function ListingConfigurationModal({ pet, isOpen, onClose, onConfirm, sav
                         Confirm Listing
                     </MagicalButton>
                 </form>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }
