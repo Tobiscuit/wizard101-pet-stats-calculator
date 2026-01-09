@@ -5,7 +5,7 @@ import { Gem, DollarSign, MessageCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { calculateAllPotentials } from '@/lib/talent-formulas';
 import { MagicalButton } from './MagicalButton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -76,10 +76,13 @@ export function ListingConfigurationModal({ pet, isOpen, onClose, onConfirm, sav
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-md w-full border-accent-gold/20 bg-background/95 backdrop-blur-xl">
-                 <DialogHeader>
+                <DialogHeader>
                     <DialogTitle className="text-2xl font-serif font-bold text-accent-gold flex items-center gap-2">
                         List in Kiosk
                     </DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
+                        Configure your listing details and price.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-6 py-4">

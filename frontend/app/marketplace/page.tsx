@@ -76,7 +76,7 @@ export default function MarketplacePage() {
                 <div>
                      <h1 className="text-4xl font-serif font-bold flex items-center gap-3">
                         <Coins className="w-10 h-10 text-yellow-500" />
-                        The Bazaar 2.0
+                        Marketplace
                      </h1>
                      <p className="text-muted-foreground">Peer-to-peer trading. Powered by Empowers.</p>
                 </div>
