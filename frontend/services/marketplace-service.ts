@@ -30,8 +30,8 @@ export async function createListing(uid: string, username: string, data: Partial
         availableBatches: data.availableBatches || 1,
         allowPartial: data.allowPartial || false,
         currency: (data.currency as any) || 'empowers',
-        pricePerUnit: data.pricePerUnit,
-        pricePerBatch: data.pricePerBatch,
+        pricePerUnit: data.pricePerUnit || undefined,
+        pricePerBatch: data.pricePerBatch || undefined,
         status: 'active',
         createdAt: serverTimestamp() as Timestamp
     };

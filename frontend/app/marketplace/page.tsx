@@ -166,7 +166,7 @@ export default function MarketplacePage() {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button onClick={handleCreate} disabled={creating}>
+                            <Button onClick={handleCreate} disabled={creating} className="bg-accent-gold text-primary-foreground hover:bg-accent-gold/90">
                                 {creating ? "Listing..." : "Post Listing"}
                             </Button>
                         </DialogFooter>
