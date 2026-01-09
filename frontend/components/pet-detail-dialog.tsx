@@ -83,9 +83,9 @@ export function PetDetailDialog({ pet, open, onClose, onListInMarketplace, onUnl
                 onClose();
             }
         }}>
-            {/* MASSIVE WIDTH INCREASE: max-w-7xl to eliminate scrolling by trading vertical for horizontal */}
+            {/* FORCE WIDTH: sm:max-w-7xl overrides sm:max-w-lg in ui/dialog.tsx */}
             <DialogContent 
-                className="w-full max-w-7xl bg-background border-border p-0 flex flex-col shadow-2xl overflow-hidden max-h-[95vh]"
+                className="w-full sm:max-w-7xl bg-background border-border p-0 flex flex-col shadow-2xl overflow-hidden max-h-[95vh] sm:rounded-2xl"
                 aria-describedby={undefined}
             >
                 
@@ -95,7 +95,7 @@ export function PetDetailDialog({ pet, open, onClose, onListInMarketplace, onUnl
                     
                     <div className="relative z-20 h-full flex flex-col justify-end p-8 pb-5">
                         <div className="flex items-end justify-between">
-                            <div>
+                            <div className="flex-1 min-w-0 mr-8"> {/* Ensure title can expand */}
                                 <div className="flex items-center gap-3 mb-2">
                                     <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground border-none uppercase tracking-widest text-[10px] px-2 py-0.5 font-bold">
                                         {pet.petSchool || 'Universal'}
@@ -104,7 +104,8 @@ export function PetDetailDialog({ pet, open, onClose, onListInMarketplace, onUnl
                                         {pet.petAge || 'Adult'}
                                     </Badge>
                                 </div>
-                                <DialogTitle className="text-4xl md:text-5xl font-black tracking-tight text-foreground mb-1 drop-shadow-sm line-clamp-1">
+                                {/* Removed line-clamp-1 to prevent truncation */}
+                                <DialogTitle className="text-4xl md:text-5xl font-black tracking-tight text-foreground mb-1 drop-shadow-sm whitespace-nowrap overflow-visible">
                                     {pet.nickname || pet.petType || 'UNKNOWN'}
                                 </DialogTitle>
                                 <p className="text-muted-foreground font-medium tracking-wide text-sm flex items-center gap-2">
