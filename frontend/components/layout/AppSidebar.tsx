@@ -88,23 +88,7 @@ import {
 const data = {
   navMain: [
     {
-      title: "Tools",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Pet Calculator",
-          url: "/calculator",
-        },
-        {
-          title: "Wizard Scanner",
-          url: "/scanner",
-        },
-      ],
-    },
-    {
-      title: "My Tome",
+      title: "Collection",
       url: "#",
       icon: BookOpen,
       isActive: true,
@@ -136,6 +120,22 @@ const data = {
         {
           title: "Olde Town",
           url: "/olde-town",
+        },
+      ],
+    },
+    {
+      title: "Tools",
+      url: "#",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Pet Calculator",
+          url: "/calculator",
+        },
+        {
+          title: "Wizard Scanner",
+          url: "/scanner",
         },
       ],
     },
